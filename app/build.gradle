@@ -9,7 +9,7 @@ android {
     namespace 'co.uk.basedapps.vpn'
 
     defaultConfig {
-        applicationId "co.uk.basedapps.vpn"
+        applicationId "com.bagmisizvpn.app"
 
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.compileSdk.get().toInteger()

@@ -2,9 +2,11 @@ package co.uk.basedapps.vpn.ui.widget
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 
 @Composable
 fun BasedAlertDialog(
@@ -18,8 +20,13 @@ fun BasedAlertDialog(
     onDismissRequest = onDismissRequest,
     title = { Text(title) },
     text = { Text(description) },
+    containerColor = BasedAppColor.Background,
     confirmButton = {
       Button(
+        colors = ButtonDefaults.buttonColors(
+          containerColor = BasedAppColor.ButtonPrimary,
+          contentColor = BasedAppColor.ButtonPrimaryText,
+        ),
         onClick = onConfirmClick,
       ) {
         Text("Ok")
@@ -28,6 +35,10 @@ fun BasedAlertDialog(
     dismissButton = onDismissClick?.let {
       {
         Button(
+          colors = ButtonDefaults.buttonColors(
+            containerColor = BasedAppColor.ButtonPrimary,
+            contentColor = BasedAppColor.ButtonPrimaryText,
+          ),
           onClick = onDismissClick,
         ) {
           Text("Cancel")

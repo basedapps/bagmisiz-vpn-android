@@ -1,13 +1,14 @@
 package co.uk.basedapps.vpn.ui.widget
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,19 +29,19 @@ fun BasedButton(
   isLoading: Boolean = false,
 ) {
   val colors = when (style) {
-    ButtonStyle.Primary -> ButtonDefaults.buttonColors(
+    ButtonStyle.Primary -> ButtonDefaults.outlinedButtonColors(
       containerColor = BasedAppColor.ButtonPrimary,
       contentColor = BasedAppColor.ButtonPrimaryText,
     )
 
-    ButtonStyle.Secondary -> ButtonDefaults.buttonColors(
-      containerColor = BasedAppColor.ButtonSecondary,
-      contentColor = BasedAppColor.ButtonSecondaryText,
+    ButtonStyle.Secondary -> ButtonDefaults.outlinedButtonColors(
+      contentColor = BasedAppColor.ButtonPrimary,
     )
   }
-  Button(
+  OutlinedButton(
     onClick = onClick,
     colors = colors,
+    border = BorderStroke(1.dp, BasedAppColor.ButtonPrimary),
     shape = RoundedCornerShape(8.dp),
     modifier = modifier
       .heightIn(min = size.minHeight)

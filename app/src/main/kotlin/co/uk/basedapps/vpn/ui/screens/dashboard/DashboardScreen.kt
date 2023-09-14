@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,8 +22,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -55,6 +52,7 @@ import co.uk.basedapps.domain_wireguard.core.init.getVpnPermissionRequest
 import co.uk.basedapps.vpn.R
 import co.uk.basedapps.vpn.common.EffectHandler
 import co.uk.basedapps.vpn.common.Status
+import co.uk.basedapps.vpn.common.TopBarIconsColorEffect
 import co.uk.basedapps.vpn.common.flags.CountryFlag
 import co.uk.basedapps.vpn.storage.SelectedCity
 import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenEffect as Effect
@@ -93,6 +91,8 @@ fun DashboardScreen(
   ) { result ->
     viewModel.onPermissionsResult(result.resultCode == Activity.RESULT_OK)
   }
+
+  TopBarIconsColorEffect(isDark = true)
 
   EffectHandler(viewModel.stateHolder.effects) { effect ->
     when (effect) {
@@ -178,18 +178,27 @@ private fun Content(
 ) {
   Box(
     modifier = Modifier
+      .background(Color.White)
       .fillMaxSize(),
   ) {
-    Map(mapPositionState)
-    TopBar(
-      state = state,
-      onSettingsClick = onSettingsClick,
-    )
-    BottomBar(
-      state = state,
-      onConnectClick = onConnectClick,
-      onSelectServerClick = onSelectServerClick,
-    )
+    Column {
+      TopBar(
+        state = state,
+        onSettingsClick = onSettingsClick,
+      )
+      Map(
+        modifier = Modifier
+          .weight(1f)
+          .padding(horizontal = 16.dp)
+          .clip(RoundedCornerShape(8.dp)),
+        mapPositionState = mapPositionState,
+      )
+      BottomBar(
+        state = state,
+        onConnectClick = onConnectClick,
+        onSelectServerClick = onSelectServerClick,
+      )
+    }
     if (state.status is Status.Loading) {
       LoadingOverlay()
     }
@@ -226,6 +235,7 @@ private fun LoadingOverlay() {
 
 @Composable
 private fun Map(
+  modifier: Modifier = Modifier,
   mapPositionState: CameraPositionState,
 ) {
   val uiSettings by remember {
@@ -243,6 +253,7 @@ private fun Map(
   GoogleMap(
     uiSettings = uiSettings,
     cameraPositionState = mapPositionState,
+    modifier = modifier,
   )
 }
 
@@ -251,13 +262,8 @@ private fun TopBar(
   state: State,
   onSettingsClick: () -> Unit,
 ) {
-  Card(
-    shape = RoundedCornerShape(
-      bottomStart = 16.dp,
-      bottomEnd = 16.dp,
-    ),
-    colors = CardDefaults.cardColors(containerColor = Color.White),
-  ) {
+  val context = LocalContext.current
+  Box {
     Box(
       contentAlignment = Alignment.Center,
       modifier = Modifier
@@ -272,18 +278,38 @@ private fun TopBar(
           .fillMaxWidth()
           .padding(horizontal = 50.dp),
       ) {
+        val ipLabel = remember(state.ipAddress) {
+          buildString {
+            append(context.getString(R.string.dashboard_your_ip).uppercase())
+            append(" • ")
+            append(state.ipAddress)
+          }
+        }
         Text(
-          text = stringResource(R.string.dashboard_your_ip).uppercase(),
-          color = BasedAppColor.TextSecondary,
+          text = ipLabel,
+          color = when (state.isConnected) {
+            true -> BasedAppColor.TextPrimary
+            false -> BasedAppColor.Accent
+          },
           fontSize = 12.sp,
-          fontWeight = FontWeight.Bold,
+          fontWeight = FontWeight.Medium,
         )
+        val isConnectedLabel = remember(state.isConnected) {
+          context.getString(
+            when (state.isConnected) {
+              true -> R.string.dashboard_connected_to_vpn
+              false -> R.string.dashboard_disconnected_from_vpn
+            },
+          ).uppercase()
+        }
         Text(
-          text = state.ipAddress,
-          color = BasedAppColor.TextPrimary,
-          fontSize = 18.sp,
-          fontWeight = FontWeight.Bold,
-          overflow = TextOverflow.Ellipsis,
+          text = isConnectedLabel,
+          color = when (state.isConnected) {
+            true -> BasedAppColor.OnLine
+            false -> BasedAppColor.TextSecondary
+          },
+          fontSize = 16.sp,
+          fontWeight = FontWeight.Medium,
           maxLines = 1,
         )
       }
@@ -310,21 +336,12 @@ private fun TopBar(
 }
 
 @Composable
-fun BoxScope.BottomBar(
+fun BottomBar(
   state: State,
   onConnectClick: () -> Unit,
   onSelectServerClick: () -> Unit,
 ) {
-  Card(
-    shape = RoundedCornerShape(
-      topStart = 16.dp,
-      topEnd = 16.dp,
-    ),
-    colors = CardDefaults.cardColors(containerColor = Color.White),
-    modifier = Modifier
-      .align(Alignment.BottomCenter)
-      .fillMaxWidth(),
-  ) {
+  Box {
     Column(
       modifier = Modifier
         .padding(horizontal = 16.dp)

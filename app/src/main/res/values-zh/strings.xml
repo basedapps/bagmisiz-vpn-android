@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BasedVPN</string>
-
     <string name="common_settings">设置</string>
     <string name="common_ok">确定</string>
     <string name="common_cancel">取消</string>
@@ -9,6 +7,8 @@
     <string name="dashboard_your_ip">您的IP地址</string>
     <string name="dashboard_connect_to_vpn">连接到 VPN</string>
     <string name="dashboard_disconnect_from_vpn">断开</string>
+    <string name="dashboard_connected_to_vpn">已连接至 VPN</string>
+    <string name="dashboard_disconnected_from_vpn">已断开连接</string>
     <string name="dashboard_error_connection_title">无法连接到服务器</string>
     <string name="dashboard_error_connection_description">请选择其他服务器或稍后重试。</string>
     <string name="dashboard_menu_settings">@string/common_settings</string>
@@ -24,4 +24,7 @@
     <string name="settings_dns_google">Google DNS</string>
     <string name="settings_dns_handshake">Handshake DNS</string>
     <string name="settings_dns_change_title">选择类型</string>
+
+    <string name="error_generic_title">出了些问题</string>
+    <string name="error_generic_description">请检查您的互联网连接并稍后重试</string>
 </resources>

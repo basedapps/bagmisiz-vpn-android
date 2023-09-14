@@ -78,6 +78,7 @@ fun CountriesScreenStateless(
       TopBar(
         title = stringResource(R.string.countries_title),
         navigateBack = navigateBack,
+        isAccented = true,
       )
     },
     content = { paddingValues ->

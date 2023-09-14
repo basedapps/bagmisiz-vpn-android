@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BasedVPN</string>
-
     <string name="common_settings">Ayarlar</string>
     <string name="common_ok">Tamam</string>
     <string name="common_cancel">İptal</string>
@@ -9,6 +7,8 @@
     <string name="dashboard_your_ip">IP Adresiniz</string>
     <string name="dashboard_connect_to_vpn">VPN\'e bağlan</string>
     <string name="dashboard_disconnect_from_vpn">Bağlantıyı kes</string>
+    <string name="dashboard_connected_to_vpn">VPN ye bağlandım</string>
+    <string name="dashboard_disconnected_from_vpn">Bağlı değil</string>
     <string name="dashboard_error_connection_title">Sunucuya Bağlanılamıyor</string>
     <string name="dashboard_error_connection_description">Lütfen başka bir sunucu seçin veya daha sonra tekrar deneyin</string>
     <string name="dashboard_menu_settings">@string/common_settings</string>
@@ -24,4 +24,7 @@
     <string name="settings_dns_google">Google DNS</string>
     <string name="settings_dns_handshake">Handshake DNS</string>
     <string name="settings_dns_change_title">Türü Seç</string>
+
+    <string name="error_generic_title">Bir şeyler yanlış gitti</string>
+    <string name="error_generic_description">Lütfen İnternet bağlantınızı kontrol edin ve daha sonra tekrar deneyin.</string>
 </resources>

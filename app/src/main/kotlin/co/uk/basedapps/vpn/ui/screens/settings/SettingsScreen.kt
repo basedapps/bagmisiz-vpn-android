@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -159,6 +161,7 @@ private fun DnsDialog(
   var radioState by remember { mutableStateOf(state.currentDns) }
   AlertDialog(
     onDismissRequest = onDismissRequest,
+    containerColor = BasedAppColor.Background,
     title = { Text(stringResource(R.string.settings_dns_change_title)) },
     text = {
       Column {
@@ -177,6 +180,9 @@ private fun DnsDialog(
             RadioButton(
               selected = dns == radioState,
               onClick = null,
+              colors = RadioButtonDefaults.colors(
+                selectedColor = BasedAppColor.Accent,
+              ),
               modifier = Modifier.padding(end = 8.dp),
             )
             Text(
@@ -189,11 +195,19 @@ private fun DnsDialog(
     },
     confirmButton = {
       Button(
+        colors = ButtonDefaults.buttonColors(
+          containerColor = BasedAppColor.ButtonPrimary,
+          contentColor = BasedAppColor.ButtonPrimaryText,
+        ),
         onClick = { radioState?.let(onConfirmClick) },
       ) { Text(stringResource(R.string.common_ok)) }
     },
     dismissButton = {
       Button(
+        colors = ButtonDefaults.buttonColors(
+          containerColor = BasedAppColor.ButtonPrimary,
+          contentColor = BasedAppColor.ButtonPrimaryText,
+        ),
         onClick = onDismissClick,
       ) {
         Text(stringResource(R.string.common_cancel))

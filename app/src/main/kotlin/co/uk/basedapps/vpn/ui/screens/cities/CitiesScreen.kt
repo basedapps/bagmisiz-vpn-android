@@ -78,6 +78,7 @@ fun CitiesScreenStateless(
       TopBar(
         title = stringResource(R.string.cities_title),
         navigateBack = navigateBack,
+        isAccented = true,
       )
     },
     content = { paddingValues ->
