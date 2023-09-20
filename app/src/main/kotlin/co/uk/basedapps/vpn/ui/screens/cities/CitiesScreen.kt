@@ -1,17 +1,20 @@
 package co.uk.basedapps.vpn.ui.screens.cities
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,11 +23,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -127,12 +128,15 @@ private fun Data(
   state: State,
   onItemClick: (City) -> Unit,
 ) {
-  LazyColumn(
+  LazyVerticalGrid(
+    columns = GridCells.Fixed(2),
+    verticalArrangement = Arrangement.spacedBy(12.dp),
+    horizontalArrangement = Arrangement.spacedBy(12.dp),
+    contentPadding = PaddingValues(16.dp),
     modifier = Modifier.fillMaxSize(),
   ) {
     items(state.cities) { country ->
       CityRow(country, onItemClick)
-      Divider(color = BasedAppColor.Divider)
     }
   }
 }
@@ -142,26 +146,31 @@ private fun CityRow(
   city: City,
   onItemClick: (City) -> Unit,
 ) {
-  Row(
+  Column(
     modifier = Modifier
+      .clip(RoundedCornerShape(8.dp))
       .clickable(onClick = { onItemClick(city) })
-      .heightIn(min = 60.dp)
-      .padding(16.dp)
-      .fillMaxWidth(),
+      .border(
+        width = 1.dp,
+        color = BasedAppColor.Divider,
+        shape = RoundedCornerShape(8.dp),
+      )
+      .padding(16.dp),
   ) {
     Text(
-      text = buildAnnotatedString {
-        withStyle(style = SpanStyle(BasedAppColor.TextPrimary)) {
-          append(city.name)
-        }
-        withStyle(style = SpanStyle(BasedAppColor.TextSecondary)) {
-          append(" • ")
-          append(stringResource(R.string.cities_servers_number, city.serversAvailable))
-        }
-      },
+      text = city.name,
+      color = BasedAppColor.TextPrimary,
       overflow = TextOverflow.Ellipsis,
       maxLines = 1,
       fontSize = 18.sp,
+    )
+    Spacer(modifier = Modifier.size(2.dp))
+    Text(
+      text = stringResource(R.string.cities_servers_number, city.serversAvailable),
+      color = BasedAppColor.TextSecondary,
+      overflow = TextOverflow.Ellipsis,
+      maxLines = 1,
+      fontSize = 12.sp,
     )
   }
 }

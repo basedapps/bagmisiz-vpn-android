@@ -2,21 +2,21 @@ package co.uk.basedapps.vpn.ui.screens.countries
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -127,12 +127,15 @@ private fun Data(
   state: State,
   onItemClick: (Country) -> Unit,
 ) {
-  LazyColumn(
+  LazyVerticalGrid(
+    columns = GridCells.Fixed(2),
+    verticalArrangement = Arrangement.spacedBy(12.dp),
+    horizontalArrangement = Arrangement.spacedBy(12.dp),
+    contentPadding = PaddingValues(16.dp),
     modifier = Modifier.fillMaxSize(),
   ) {
     items(state.countries) { country ->
       CountryRow(country, onItemClick)
-      Divider(color = BasedAppColor.Divider)
     }
   }
 }
@@ -142,12 +145,16 @@ private fun CountryRow(
   country: Country,
   onItemClick: (Country) -> Unit,
 ) {
-  Row(
+  Column(
     modifier = Modifier
+      .clip(RoundedCornerShape(8.dp))
       .clickable(onClick = { onItemClick(country) })
-      .heightIn(min = 60.dp)
-      .padding(16.dp)
-      .fillMaxWidth(),
+      .border(
+        width = 1.dp,
+        color = BasedAppColor.Divider,
+        shape = RoundedCornerShape(8.dp),
+      )
+      .padding(16.dp),
   ) {
     val flagRes = country.flag?.res
     if (flagRes != null) {
@@ -167,7 +174,7 @@ private fun CountryRow(
           .clip(RoundedCornerShape(4.dp)),
       )
     }
-    Spacer(modifier = Modifier.size(16.dp))
+    Spacer(modifier = Modifier.size(6.dp))
     Text(
       text = country.name,
       overflow = TextOverflow.Ellipsis,

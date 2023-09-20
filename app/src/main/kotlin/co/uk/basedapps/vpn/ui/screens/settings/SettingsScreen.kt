@@ -1,18 +1,24 @@
 package co.uk.basedapps.vpn.ui.screens.settings
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -25,9 +31,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -92,28 +98,31 @@ fun Content(
   onDnsDialogConfirmClick: (DdsConfigurator.Dns) -> Unit,
   onDnsDialogDismissClick: () -> Unit,
 ) {
-  Box {
-    Column(
-      modifier = Modifier
-        .padding(paddingValues),
+  Box(Modifier.padding(paddingValues)) {
+    LazyVerticalGrid(
+      columns = GridCells.Fixed(2),
+      verticalArrangement = Arrangement.spacedBy(12.dp),
+      horizontalArrangement = Arrangement.spacedBy(12.dp),
+      contentPadding = PaddingValues(16.dp),
+      modifier = Modifier.fillMaxSize(),
     ) {
-      SettingsRow(
-        title = stringResource(R.string.settings_row_dns),
-        value = state.currentDns
-          ?.let { stringResource(it.getLabelRes()) } ?: "",
-        modifier = Modifier
-          .clickable(onClick = onDnsRowClick),
-      )
-      Divider(color = BasedAppColor.Divider)
+      item {
+        SettingsRow(
+          title = stringResource(R.string.settings_row_dns),
+          value = state.currentDns
+            ?.let { stringResource(it.getLabelRes()) } ?: "",
+          onItemClick = onDnsRowClick,
+        )
+      }
     }
-    if (state.isDnsSelectorVisible) {
-      DnsDialog(
-        state = state,
-        onConfirmClick = onDnsDialogConfirmClick,
-        onDismissClick = onDnsDialogDismissClick,
-        onDismissRequest = onDnsDialogDismissClick,
-      )
-    }
+  }
+  if (state.isDnsSelectorVisible) {
+    DnsDialog(
+      state = state,
+      onConfirmClick = onDnsDialogConfirmClick,
+      onDismissClick = onDnsDialogDismissClick,
+      onDismissRequest = onDnsDialogDismissClick,
+    )
   }
 }
 
@@ -121,13 +130,18 @@ fun Content(
 private fun SettingsRow(
   title: String,
   value: String,
-  modifier: Modifier = Modifier,
+  onItemClick: () -> Unit,
 ) {
-  Row(
-    modifier = modifier
-      .heightIn(min = 60.dp)
-      .padding(16.dp)
-      .fillMaxWidth(),
+  Column(
+    modifier = Modifier
+      .clip(RoundedCornerShape(8.dp))
+      .clickable(onClick = onItemClick)
+      .border(
+        width = 1.dp,
+        color = BasedAppColor.Divider,
+        shape = RoundedCornerShape(8.dp),
+      )
+      .padding(16.dp),
   ) {
     Text(
       text = title,
@@ -135,18 +149,14 @@ private fun SettingsRow(
       maxLines = 1,
       fontSize = 18.sp,
       color = BasedAppColor.TextPrimary,
-      modifier = Modifier.weight(1f),
     )
+    Spacer(modifier = Modifier.size(2.dp))
     Text(
       text = value,
-      textAlign = TextAlign.End,
       overflow = TextOverflow.Ellipsis,
       maxLines = 1,
-      fontSize = 18.sp,
+      fontSize = 12.sp,
       color = BasedAppColor.TextSecondary,
-      modifier = Modifier
-        .weight(1f),
-
     )
   }
 }
