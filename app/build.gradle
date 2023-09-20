@@ -9,14 +9,14 @@ android {
     namespace 'co.uk.basedapps.vpn'
 
     defaultConfig {
-        applicationId "com.bagmisizvpn.app"
+        applicationId "com.bagimsizvpn.app"
 
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.compileSdk.get().toInteger()
         compileSdk libs.versions.compileSdk.get().toInteger()
 
-        versionCode 4
-        versionName "1.1.0"
+        versionCode 1
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -13,7 +13,7 @@ dependencyResolutionManagement {
         flatDir { dirs 'v2ray/libs' }
     }
 }
-rootProject.name = "Bagmisiz VPN"
+rootProject.name = "Bagimsiz VPN"
 include ':app',
         ':domain',
         ':v2ray',

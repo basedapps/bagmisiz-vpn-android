@@ -1,17 +1,24 @@
 package co.uk.basedapps.vpn.ui.widget
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -27,6 +34,7 @@ fun BasedButton(
   modifier: Modifier = Modifier,
   size: ButtonSize = ButtonSize.L,
   isLoading: Boolean = false,
+  @DrawableRes iconRes: Int? = null,
 ) {
   val colors = when (style) {
     ButtonStyle.Primary -> ButtonDefaults.outlinedButtonColors(
@@ -53,10 +61,23 @@ fun BasedButton(
         modifier = Modifier.size(size.progressSize),
       )
     } else {
-      Text(
-        text = text.uppercase(),
-        fontSize = size.fontSize,
-      )
+      Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+      ) {
+        if (iconRes != null) {
+          Icon(
+            painter = painterResource(iconRes),
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(24.dp),
+          )
+          Spacer(modifier = Modifier.size(2.dp))
+        }
+        Text(
+          text = text.uppercase(),
+          fontSize = size.fontSize,
+        )
+      }
     }
   }
 }

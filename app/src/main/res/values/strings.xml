@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Bagmisiz VPN</string>
+    <string name="app_name" translatable="false">Bagimsiz VPN</string>
 
     <string name="common_settings">Settings</string>
     <string name="common_ok">OK</string>

@@ -365,6 +365,7 @@ fun BottomBar(
         ),
         style = if (state.isConnected) ButtonStyle.Secondary else ButtonStyle.Primary,
         onClick = onConnectClick,
+        iconRes = if (state.isConnected) null else R.drawable.ic_rocket,
         modifier = Modifier.fillMaxWidth(),
       )
     }
