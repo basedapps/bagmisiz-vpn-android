@@ -24,7 +24,8 @@
     <string name="settings_dns_google">Google DNS</string>
     <string name="settings_dns_handshake">Handshake DNS</string>
     <string name="settings_dns_change_title">Türü Seç</string>
-    <string name="settings_telergam_btn">Telegram sohbetimiz</string>
+    <string name="settings_telegram_btn">Telegram sohbetimiz</string>
+    <string name="settings_app_version">Sürüm %s</string>
 
     <string name="error_generic_title">Bir şeyler yanlış gitti</string>
     <string name="error_generic_description">Lütfen İnternet bağlantınızı kontrol edin ve daha sonra tekrar deneyin.</string>

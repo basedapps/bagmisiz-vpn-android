@@ -134,10 +134,16 @@ fun Content(
     Column(
       horizontalAlignment = Alignment.CenterHorizontally,
       modifier = Modifier
-        .padding(bottom = 8.dp)
+        .padding(bottom = 16.dp)
         .align(Alignment.BottomCenter),
     ) {
       TelegramButton(onTelegramClick)
+      Spacer(modifier = Modifier.size(16.dp))
+      Text(
+        text = stringResource(R.string.settings_app_version, state.appVersion),
+        fontSize = 16.sp,
+        color = BasedAppColor.TextSecondary,
+      )
     }
   }
   if (state.isDnsSelectorVisible) {

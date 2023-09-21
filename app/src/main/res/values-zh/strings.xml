@@ -24,7 +24,8 @@
     <string name="settings_dns_google">Google DNS</string>
     <string name="settings_dns_handshake">Handshake DNS</string>
     <string name="settings_dns_change_title">选择类型</string>
-    <string name="settings_telergam_btn">我们的电报聊天</string>
+    <string name="settings_telegram_btn">我们的电报聊天</string>
+    <string name="settings_app_version">版本 %s</string>
 
     <string name="error_generic_title">出了些问题</string>
     <string name="error_generic_description">请检查您的互联网连接并稍后重试</string>

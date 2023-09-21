@@ -25,7 +25,8 @@
     <string name="settings_dns_google">Google DNS</string>
     <string name="settings_dns_handshake">Handshake DNS</string>
     <string name="settings_dns_change_title">Choose type</string>
-    <string name="settings_telergam_btn">Our Telegram chat</string>
+    <string name="settings_telegram_btn">Our Telegram chat</string>
+    <string name="settings_app_version">Version %s</string>
 
     <string name="error_generic_title">Something went wrong</string>
     <string name="error_generic_description">Please check your Internet connection and try again later</string>

@@ -1,5 +1,6 @@
 package co.uk.basedapps.vpn.ui.screens.settings
 
+import co.uk.basedapps.vpn.BuildConfig
 import co.uk.basedapps.vpn.common.ViewStateHolder
 import co.uk.basedapps.vpn.vpn.DdsConfigurator
 import javax.inject.Inject
@@ -18,6 +19,7 @@ data class SettingsScreenState(
     DdsConfigurator.Dns.Handshake,
   ),
   val isDnsSelectorVisible: Boolean = false,
+  val appVersion: String = BuildConfig.VERSION_NAME,
 )
 
 sealed interface SettingsScreenEffect {

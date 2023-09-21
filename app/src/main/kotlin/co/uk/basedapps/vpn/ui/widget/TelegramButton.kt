@@ -39,7 +39,7 @@ fun TelegramButton(
     )
     Spacer(modifier = Modifier.size(16.dp))
     Text(
-      text = stringResource(R.string.settings_telergam_btn),
+      text = stringResource(R.string.settings_telegram_btn),
       fontSize = 16.sp,
     )
   }
