@@ -45,4 +45,8 @@ class SettingsScreenViewModel
   fun onDnsDialogDismissClick() {
     stateHolder.updateState { copy(isDnsSelectorVisible = false) }
   }
+
+  fun onTelegramClick() {
+    stateHolder.sendEffect(SettingsScreenEffect.OpenTelegram)
+  }
 }

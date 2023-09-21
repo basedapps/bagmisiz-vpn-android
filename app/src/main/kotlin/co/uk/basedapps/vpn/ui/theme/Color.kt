@@ -30,4 +30,6 @@ object BasedAppColor {
   val Background = Color.White
 
   val OnLine = Color(0xFF34C759)
+
+  val Telegram = Color(0xFF20A0E1)
 }

@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,8 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import co.uk.basedapps.vpn.R
+import co.uk.basedapps.vpn.common.EffectHandler
+import co.uk.basedapps.vpn.common.openWeb
 import co.uk.basedapps.vpn.ui.screens.settings.SettingsScreenState as State
 import co.uk.basedapps.vpn.ui.theme.BasedAppColor
+import co.uk.basedapps.vpn.ui.widget.TelegramButton
 import co.uk.basedapps.vpn.ui.widget.TopBar
 import co.uk.basedapps.vpn.vpn.DdsConfigurator
 
@@ -52,6 +56,14 @@ fun SettingsScreen(
 
   val viewModel = hiltViewModel<SettingsScreenViewModel>()
   val state by viewModel.stateHolder.state.collectAsState()
+  val context = LocalContext.current
+
+  EffectHandler(viewModel.stateHolder.effects) { effect ->
+    when (effect) {
+      is SettingsScreenEffect.OpenTelegram ->
+        context.openWeb("https://t.me/bagimsizdvpn")
+    }
+  }
 
   SettingsScreenStateless(
     state = state,
@@ -59,6 +71,7 @@ fun SettingsScreen(
     onDnsRowClick = viewModel::onDnsRowClick,
     onDnsDialogConfirmClick = viewModel::onDnsSelected,
     onDnsDialogDismissClick = viewModel::onDnsDialogDismissClick,
+    onTelegramClick = viewModel::onTelegramClick,
   )
 }
 
@@ -69,6 +82,7 @@ fun SettingsScreenStateless(
   onDnsRowClick: () -> Unit,
   onDnsDialogConfirmClick: (DdsConfigurator.Dns) -> Unit,
   onDnsDialogDismissClick: () -> Unit,
+  onTelegramClick: () -> Unit,
 ) {
   Scaffold(
     containerColor = BasedAppColor.Background,
@@ -85,6 +99,7 @@ fun SettingsScreenStateless(
         onDnsRowClick = onDnsRowClick,
         onDnsDialogConfirmClick = onDnsDialogConfirmClick,
         onDnsDialogDismissClick = onDnsDialogDismissClick,
+        onTelegramClick = onTelegramClick,
       )
     },
   )
@@ -97,6 +112,7 @@ fun Content(
   onDnsRowClick: () -> Unit,
   onDnsDialogConfirmClick: (DdsConfigurator.Dns) -> Unit,
   onDnsDialogDismissClick: () -> Unit,
+  onTelegramClick: () -> Unit,
 ) {
   Box(Modifier.padding(paddingValues)) {
     LazyVerticalGrid(
@@ -114,6 +130,14 @@ fun Content(
           onItemClick = onDnsRowClick,
         )
       }
+    }
+    Column(
+      horizontalAlignment = Alignment.CenterHorizontally,
+      modifier = Modifier
+        .padding(bottom = 8.dp)
+        .align(Alignment.BottomCenter),
+    ) {
+      TelegramButton(onTelegramClick)
     }
   }
   if (state.isDnsSelectorVisible) {
@@ -147,7 +171,7 @@ private fun SettingsRow(
       text = title,
       overflow = TextOverflow.Ellipsis,
       maxLines = 1,
-      fontSize = 18.sp,
+      fontSize = 16.sp,
       color = BasedAppColor.TextPrimary,
     )
     Spacer(modifier = Modifier.size(2.dp))

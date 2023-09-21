@@ -1,13 +1,12 @@
 package co.uk.basedapps.vpn.ui.screens.settings
 
 import co.uk.basedapps.vpn.common.ViewStateHolder
-import co.uk.basedapps.vpn.ui.screens.countries.CountriesScreenEffect
 import co.uk.basedapps.vpn.vpn.DdsConfigurator
 import javax.inject.Inject
 
 class SettingsScreenStateHolder
 @Inject
-constructor() : ViewStateHolder<SettingsScreenState, CountriesScreenEffect>(
+constructor() : ViewStateHolder<SettingsScreenState, SettingsScreenEffect>(
   SettingsScreenState(),
 )
 
@@ -20,3 +19,7 @@ data class SettingsScreenState(
   ),
   val isDnsSelectorVisible: Boolean = false,
 )
+
+sealed interface SettingsScreenEffect {
+  data object OpenTelegram : SettingsScreenEffect
+}
