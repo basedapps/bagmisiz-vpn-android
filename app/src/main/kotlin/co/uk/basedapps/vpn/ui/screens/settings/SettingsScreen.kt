@@ -6,44 +6,34 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import co.uk.basedapps.vpn.R
 import co.uk.basedapps.vpn.common.EffectHandler
 import co.uk.basedapps.vpn.common.openWeb
+import co.uk.basedapps.vpn.network.model.Protocol
 import co.uk.basedapps.vpn.ui.screens.settings.SettingsScreenState as State
+import co.uk.basedapps.vpn.ui.screens.settings.widgets.DnsDialog
+import co.uk.basedapps.vpn.ui.screens.settings.widgets.ProtocolDialog
 import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 import co.uk.basedapps.vpn.ui.widget.TelegramButton
 import co.uk.basedapps.vpn.ui.widget.TopBar
@@ -72,6 +62,9 @@ fun SettingsScreen(
     onDnsDialogConfirmClick = viewModel::onDnsSelected,
     onDnsDialogDismissClick = viewModel::onDnsDialogDismissClick,
     onTelegramClick = viewModel::onTelegramClick,
+    onProtocolRowClick = viewModel::onProtocolRowClick,
+    onProtocolDialogConfirmClick = viewModel::onProtocolSelected,
+    onProtocolDialogDismissClick = viewModel::onProtocolDialogDismissClick,
   )
 }
 
@@ -82,6 +75,9 @@ fun SettingsScreenStateless(
   onDnsRowClick: () -> Unit,
   onDnsDialogConfirmClick: (DdsConfigurator.Dns) -> Unit,
   onDnsDialogDismissClick: () -> Unit,
+  onProtocolRowClick: () -> Unit,
+  onProtocolDialogConfirmClick: (Protocol) -> Unit,
+  onProtocolDialogDismissClick: () -> Unit,
   onTelegramClick: () -> Unit,
 ) {
   Scaffold(
@@ -99,6 +95,9 @@ fun SettingsScreenStateless(
         onDnsRowClick = onDnsRowClick,
         onDnsDialogConfirmClick = onDnsDialogConfirmClick,
         onDnsDialogDismissClick = onDnsDialogDismissClick,
+        onProtocolRowClick = onProtocolRowClick,
+        onProtocolDialogConfirmClick = onProtocolDialogConfirmClick,
+        onProtocolDialogDismissClick = onProtocolDialogDismissClick,
         onTelegramClick = onTelegramClick,
       )
     },
@@ -112,6 +111,9 @@ fun Content(
   onDnsRowClick: () -> Unit,
   onDnsDialogConfirmClick: (DdsConfigurator.Dns) -> Unit,
   onDnsDialogDismissClick: () -> Unit,
+  onProtocolRowClick: () -> Unit,
+  onProtocolDialogConfirmClick: (Protocol) -> Unit,
+  onProtocolDialogDismissClick: () -> Unit,
   onTelegramClick: () -> Unit,
 ) {
   Box(Modifier.padding(paddingValues)) {
@@ -128,6 +130,14 @@ fun Content(
           value = state.currentDns
             ?.let { stringResource(it.getLabelRes()) } ?: "",
           onItemClick = onDnsRowClick,
+        )
+      }
+      item {
+        SettingsRow(
+          title = stringResource(R.string.settings_row_protocol),
+          value = state.currentProtocol?.labelRes
+            ?.let { stringResource(it) } ?: "",
+          onItemClick = onProtocolRowClick,
         )
       }
     }
@@ -152,6 +162,15 @@ fun Content(
       onConfirmClick = onDnsDialogConfirmClick,
       onDismissClick = onDnsDialogDismissClick,
       onDismissRequest = onDnsDialogDismissClick,
+    )
+  }
+
+  if (state.isProtocolSelectorVisible) {
+    ProtocolDialog(
+      state = state,
+      onConfirmClick = onProtocolDialogConfirmClick,
+      onDismissClick = onProtocolDialogDismissClick,
+      onDismissRequest = onProtocolDialogDismissClick,
     )
   }
 }
@@ -189,84 +208,6 @@ private fun SettingsRow(
       color = BasedAppColor.TextSecondary,
     )
   }
-}
-
-@Composable
-private fun DnsDialog(
-  state: State,
-  onConfirmClick: (DdsConfigurator.Dns) -> Unit,
-  onDismissClick: () -> Unit,
-  onDismissRequest: () -> Unit = {},
-) {
-  var radioState by remember { mutableStateOf(state.currentDns) }
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    containerColor = BasedAppColor.Background,
-    title = { Text(stringResource(R.string.settings_dns_change_title)) },
-    text = {
-      Column {
-        state.dnsOptions.forEach { dns ->
-          Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-              .fillMaxWidth()
-              .selectable(
-                selected = dns == radioState,
-                onClick = { radioState = dns },
-                role = Role.RadioButton,
-              )
-              .padding(vertical = 8.dp),
-          ) {
-            RadioButton(
-              selected = dns == radioState,
-              onClick = null,
-              colors = RadioButtonDefaults.colors(
-                selectedColor = BasedAppColor.Accent,
-              ),
-              modifier = Modifier.padding(end = 8.dp),
-            )
-            Text(
-              text = stringResource(dns.getLabelRes()),
-              maxLines = 1,
-            )
-          }
-        }
-      }
-    },
-    confirmButton = {
-      Button(
-        colors = ButtonDefaults.buttonColors(
-          containerColor = BasedAppColor.ButtonPrimary,
-          contentColor = BasedAppColor.ButtonPrimaryText,
-        ),
-        onClick = { radioState?.let(onConfirmClick) },
-      ) { Text(stringResource(R.string.common_ok)) }
-    },
-    dismissButton = {
-      Button(
-        colors = ButtonDefaults.buttonColors(
-          containerColor = BasedAppColor.ButtonPrimary,
-          contentColor = BasedAppColor.ButtonPrimaryText,
-        ),
-        onClick = onDismissClick,
-      ) {
-        Text(stringResource(R.string.common_cancel))
-      }
-    },
-  )
-}
-
-@Composable
-@Preview
-private fun DnsDialogPreview() {
-  DnsDialog(
-    state = State(
-      currentDns = DdsConfigurator.Dns.Cloudflare,
-    ),
-    onConfirmClick = {},
-    onDismissClick = {},
-    onDismissRequest = {},
-  )
 }
 
 fun DdsConfigurator.Dns.getLabelRes() =

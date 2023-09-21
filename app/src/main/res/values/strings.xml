@@ -21,12 +21,19 @@
 
     <string name="settings_title">@string/common_settings</string>
     <string name="settings_row_dns">DNS Server</string>
+    <string name="settings_row_protocol">VPN protocol</string>
+    <string name="settings_telegram_btn">Our Telegram chat</string>
+    <string name="settings_app_version">Version %s</string>
+
     <string name="settings_dns_cloudflare">Cloudflare DNS</string>
     <string name="settings_dns_google">Google DNS</string>
     <string name="settings_dns_handshake">Handshake DNS</string>
     <string name="settings_dns_change_title">Choose type</string>
-    <string name="settings_telegram_btn">Our Telegram chat</string>
-    <string name="settings_app_version">Version %s</string>
+
+    <string name="settings_protocol_wireguard">WireGuard</string>
+    <string name="settings_protocol_v2ray">V2Ray</string>
+    <string name="settings_protocol_any">Any</string>
+    <string name="settings_protocol_change_title">Choose protocol</string>
 
     <string name="error_generic_title">Something went wrong</string>
     <string name="error_generic_description">Please check your Internet connection and try again later</string>

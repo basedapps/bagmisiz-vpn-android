@@ -3,6 +3,7 @@ package co.uk.basedapps.vpn.storage
 import android.content.SharedPreferences
 import co.uk.basedapps.vpn.network.model.City
 import co.uk.basedapps.vpn.network.model.Country
+import co.uk.basedapps.vpn.network.model.Protocol
 import co.uk.basedapps.vpn.prefs.delegate
 import co.uk.basedapps.vpn.prefs.getValue
 import co.uk.basedapps.vpn.prefs.setValue
@@ -22,6 +23,8 @@ class BasedStorage
 
   private val selectedCityDelegate = prefs.delegate("selected_city", "")
   private var selectedCityPref: String by selectedCityDelegate
+
+  private var protocolPref by prefs.delegate("selected_protocol", "")
 
   fun storeToken(token: String) {
     tokenPref = token
@@ -45,4 +48,10 @@ class BasedStorage
     selectedCityDelegate.observe
       .map { cityJson -> gson.fromJson(cityJson, SelectedCity::class.java) }
       .catch { emit(null) }
+
+  fun storeVpnProtocol(protocol: Protocol) {
+    protocolPref = protocol.strValue
+  }
+
+  fun getVpnProtocol(): Protocol = Protocol.fromString(protocolPref)
 }

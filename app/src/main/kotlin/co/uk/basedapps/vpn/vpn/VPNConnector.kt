@@ -14,6 +14,7 @@ import co.uk.basedapps.vpn.common.decodeWireguardVpnProfile
 import co.uk.basedapps.vpn.network.BasedRepository
 import co.uk.basedapps.vpn.network.model.Credentials
 import co.uk.basedapps.vpn.network.model.Protocol
+import co.uk.basedapps.vpn.storage.BasedStorage
 import co.uk.basedapps.vpn.storage.SelectedCity
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +24,7 @@ class VPNConnector @Inject constructor(
   private val repository: BasedRepository,
   private val wireguardRepository: WireguardRepository,
   private val v2RayRepository: V2RayRepository,
+  private val storage: BasedStorage,
 ) {
 
   suspend fun connect(city: SelectedCity): Either<Unit, Unit> {
@@ -51,9 +53,12 @@ class VPNConnector @Inject constructor(
   }
 
   private suspend fun getCredentials(city: SelectedCity): Either<Unit, Unit> {
+    val protocol = storage.getVpnProtocol()
+      .takeIf { it != Protocol.NONE }
     val credentialsRes = repository.getCredentials(
       countryId = city.countryId,
       cityId = city.id,
+      protocol = protocol,
     ).getOrNull()
     credentialsRes ?: return Either.Left(Unit)
 
@@ -81,6 +86,8 @@ class VPNConnector @Inject constructor(
           uid = credentials.privateKey,
         ),
       )
+
+      else -> throw Exception("Unknown protocol")
     }
   }
 

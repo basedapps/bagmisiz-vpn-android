@@ -32,7 +32,7 @@ fun TelegramButton(
     modifier = Modifier.heightIn(min = 52.dp),
   ) {
     Icon(
-      painter = painterResource(R.drawable.ic_rocket),
+      painter = painterResource(R.drawable.ic_telegram),
       contentDescription = null,
       tint = BasedAppColor.Telegram,
       modifier = Modifier.size(24.dp),

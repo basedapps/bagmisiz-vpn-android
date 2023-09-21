@@ -6,6 +6,7 @@ import co.uk.basedapps.vpn.network.model.Credentials
 import co.uk.basedapps.vpn.network.model.DataList
 import co.uk.basedapps.vpn.network.model.DataObj
 import co.uk.basedapps.vpn.network.model.IpModel
+import co.uk.basedapps.vpn.network.model.Protocol
 import co.uk.basedapps.vpn.network.model.TokenModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -30,10 +31,12 @@ class BasedRepository
   suspend fun getCredentials(
     countryId: Int,
     cityId: Int,
+    protocol: Protocol?,
   ): NetResult<DataObj<Credentials>> = execute {
     api.getCredentials(
       countryId = countryId,
       cityId = cityId,
+      protocol = protocol?.strValue ?: "",
     )
   }
 

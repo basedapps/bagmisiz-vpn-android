@@ -33,10 +33,11 @@ interface Api {
    * 401 — не авторизован (нет токена или он неверный)
    * 410 — сервер, к которому попытались подключиться, умер и не отвечает
    */
-  @POST("countries/{countryId}/cities/{cityId}/credentials")
+  @POST("countries/{countryId}/cities/{cityId}/credentials/{protocol}")
   suspend fun getCredentials(
     @Path("countryId") countryId: Int,
     @Path("cityId") cityId: Int,
+    @Path("protocol") protocol: String,
   ): DataObj<Credentials>
 
   @GET("ip")

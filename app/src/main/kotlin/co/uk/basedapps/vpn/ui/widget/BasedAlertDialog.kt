@@ -18,8 +18,18 @@ fun BasedAlertDialog(
 ) {
   AlertDialog(
     onDismissRequest = onDismissRequest,
-    title = { Text(title) },
-    text = { Text(description) },
+    title = {
+      Text(
+        text = title,
+        color = BasedAppColor.TextPrimary,
+      )
+    },
+    text = {
+      Text(
+        text = description,
+        color = BasedAppColor.TextSecondary,
+      )
+    },
     containerColor = BasedAppColor.Background,
     confirmButton = {
       Button(
