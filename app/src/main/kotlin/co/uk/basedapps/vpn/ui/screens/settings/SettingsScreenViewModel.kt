@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.uk.basedapps.vpn.network.model.Protocol
 import co.uk.basedapps.vpn.storage.BasedStorage
+import co.uk.basedapps.vpn.storage.LogsStorage
 import co.uk.basedapps.vpn.vpn.DdsConfigurator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,6 +16,7 @@ class SettingsScreenViewModel
   val stateHolder: SettingsScreenStateHolder,
   private val dnsConfigurator: DdsConfigurator,
   private val storage: BasedStorage,
+  private val logsStorage: LogsStorage,
 ) : ViewModel() {
 
   private val state: SettingsScreenState
@@ -75,5 +77,12 @@ class SettingsScreenViewModel
 
   fun onTelegramClick() {
     stateHolder.sendEffect(SettingsScreenEffect.OpenTelegram)
+  }
+
+  fun onLogsRowClick() {
+    val logs = logsStorage.getLogs()
+    stateHolder.sendEffect(
+      SettingsScreenEffect.CopyLogsToClipboard(logs),
+    )
   }
 }

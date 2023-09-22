@@ -18,3 +18,8 @@ data class SelectedCity(
 
   val serverId: String = "$countryId:$id"
 }
+
+data class LogEntity(
+  val time: Long,
+  val message: String,
+)

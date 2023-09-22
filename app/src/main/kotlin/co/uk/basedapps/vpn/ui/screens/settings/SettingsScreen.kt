@@ -14,15 +14,21 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +44,7 @@ import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 import co.uk.basedapps.vpn.ui.widget.TelegramButton
 import co.uk.basedapps.vpn.ui.widget.TopBar
 import co.uk.basedapps.vpn.vpn.DdsConfigurator
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(
@@ -46,17 +53,32 @@ fun SettingsScreen(
 
   val viewModel = hiltViewModel<SettingsScreenViewModel>()
   val state by viewModel.stateHolder.state.collectAsState()
+
   val context = LocalContext.current
+  val clipboardManager = LocalClipboardManager.current
+
+  val snackbarHostState = remember { SnackbarHostState() }
+  val scope = rememberCoroutineScope()
 
   EffectHandler(viewModel.stateHolder.effects) { effect ->
     when (effect) {
       is SettingsScreenEffect.OpenTelegram ->
         context.openWeb("https://t.me/bagimsizdvpn")
+
+      is SettingsScreenEffect.CopyLogsToClipboard -> {
+        clipboardManager.setText(AnnotatedString(effect.logs))
+        scope.launch {
+          snackbarHostState.showSnackbar(
+            context.getString(R.string.settings_logs_success),
+          )
+        }
+      }
     }
   }
 
   SettingsScreenStateless(
     state = state,
+    snackbarHostState = snackbarHostState,
     navigateBack = navigateBack,
     onDnsRowClick = viewModel::onDnsRowClick,
     onDnsDialogConfirmClick = viewModel::onDnsSelected,
@@ -65,12 +87,14 @@ fun SettingsScreen(
     onProtocolRowClick = viewModel::onProtocolRowClick,
     onProtocolDialogConfirmClick = viewModel::onProtocolSelected,
     onProtocolDialogDismissClick = viewModel::onProtocolDialogDismissClick,
+    onLogsRowClick = viewModel::onLogsRowClick,
   )
 }
 
 @Composable
 fun SettingsScreenStateless(
   state: State,
+  snackbarHostState: SnackbarHostState,
   navigateBack: () -> Unit,
   onDnsRowClick: () -> Unit,
   onDnsDialogConfirmClick: (DdsConfigurator.Dns) -> Unit,
@@ -78,6 +102,7 @@ fun SettingsScreenStateless(
   onProtocolRowClick: () -> Unit,
   onProtocolDialogConfirmClick: (Protocol) -> Unit,
   onProtocolDialogDismissClick: () -> Unit,
+  onLogsRowClick: () -> Unit,
   onTelegramClick: () -> Unit,
 ) {
   Scaffold(
@@ -88,6 +113,7 @@ fun SettingsScreenStateless(
         navigateBack = navigateBack,
       )
     },
+    snackbarHost = { SnackbarHost(snackbarHostState) },
     content = { paddingValues ->
       Content(
         paddingValues = paddingValues,
@@ -98,6 +124,7 @@ fun SettingsScreenStateless(
         onProtocolRowClick = onProtocolRowClick,
         onProtocolDialogConfirmClick = onProtocolDialogConfirmClick,
         onProtocolDialogDismissClick = onProtocolDialogDismissClick,
+        onLogsRowClick = onLogsRowClick,
         onTelegramClick = onTelegramClick,
       )
     },
@@ -114,6 +141,7 @@ fun Content(
   onProtocolRowClick: () -> Unit,
   onProtocolDialogConfirmClick: (Protocol) -> Unit,
   onProtocolDialogDismissClick: () -> Unit,
+  onLogsRowClick: () -> Unit,
   onTelegramClick: () -> Unit,
 ) {
   Box(Modifier.padding(paddingValues)) {
@@ -138,6 +166,13 @@ fun Content(
           value = state.currentProtocol?.labelRes
             ?.let { stringResource(it) } ?: "",
           onItemClick = onProtocolRowClick,
+        )
+      }
+      item {
+        SettingsRow(
+          title = stringResource(R.string.settings_row_logs),
+          value = stringResource(R.string.settings_logs_description),
+          onItemClick = onLogsRowClick,
         )
       }
     }

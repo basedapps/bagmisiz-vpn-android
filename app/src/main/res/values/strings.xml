@@ -22,6 +22,7 @@
     <string name="settings_title">@string/common_settings</string>
     <string name="settings_row_dns">DNS Server</string>
     <string name="settings_row_protocol">VPN protocol</string>
+    <string name="settings_row_logs">App Logs</string>
     <string name="settings_telegram_btn">Our Telegram chat</string>
     <string name="settings_app_version">Version %s</string>
 
@@ -34,6 +35,9 @@
     <string name="settings_protocol_v2ray">V2Ray</string>
     <string name="settings_protocol_any">Any</string>
     <string name="settings_protocol_change_title">Choose protocol</string>
+
+    <string name="settings_logs_description">Copy to clipboard</string>
+    <string name="settings_logs_success">Logs copied to clipboard</string>
 
     <string name="error_generic_title">Something went wrong</string>
     <string name="error_generic_description">Please check your Internet connection and try again later</string>
