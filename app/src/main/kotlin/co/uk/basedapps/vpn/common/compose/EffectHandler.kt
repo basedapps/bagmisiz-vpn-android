@@ -1,4 +1,4 @@
-package co.uk.basedapps.vpn.common
+package co.uk.basedapps.vpn.common.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

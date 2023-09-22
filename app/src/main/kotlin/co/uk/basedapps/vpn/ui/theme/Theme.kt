@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import co.uk.basedapps.vpn.common.TopBarIconsColorEffect
+import co.uk.basedapps.vpn.common.compose.TopBarIconsColorEffect
 
 private val DarkColorScheme = darkColorScheme(
   primary = Purple80,

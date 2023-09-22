@@ -12,7 +12,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import co.uk.basedapps.vpn.common.TopBarIconsColorEffect
+import co.uk.basedapps.vpn.common.compose.TopBarIconsColorEffect
 import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 
 @Composable

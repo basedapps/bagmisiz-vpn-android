@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import co.uk.basedapps.vpn.R
-import co.uk.basedapps.vpn.common.EffectHandler
-import co.uk.basedapps.vpn.common.openWeb
+import co.uk.basedapps.vpn.common.compose.EffectHandler
+import co.uk.basedapps.vpn.common.ext.openWeb
 import co.uk.basedapps.vpn.network.model.Protocol
 import co.uk.basedapps.vpn.ui.screens.settings.SettingsScreenState as State
 import co.uk.basedapps.vpn.ui.screens.settings.widgets.DnsDialog

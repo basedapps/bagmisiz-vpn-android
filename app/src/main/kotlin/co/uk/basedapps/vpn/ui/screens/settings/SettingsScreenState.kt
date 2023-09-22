@@ -1,7 +1,7 @@
 package co.uk.basedapps.vpn.ui.screens.settings
 
 import co.uk.basedapps.vpn.BuildConfig
-import co.uk.basedapps.vpn.common.ViewStateHolder
+import co.uk.basedapps.vpn.common.state.ViewStateHolder
 import co.uk.basedapps.vpn.network.model.Protocol
 import co.uk.basedapps.vpn.vpn.DdsConfigurator
 import javax.inject.Inject

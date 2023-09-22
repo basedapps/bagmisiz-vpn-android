@@ -1,4 +1,4 @@
-package co.uk.basedapps.vpn.common
+package co.uk.basedapps.vpn.vpn
 
 import android.util.Base64
 import co.uk.basedapps.domain.extension.bytesToUnsignedShort

@@ -1,4 +1,4 @@
-package co.uk.basedapps.vpn.common
+package co.uk.basedapps.vpn.common.ext
 
 import android.content.Context
 import android.content.Intent

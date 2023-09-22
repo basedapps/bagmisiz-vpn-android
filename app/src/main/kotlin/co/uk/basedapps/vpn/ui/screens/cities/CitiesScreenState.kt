@@ -1,7 +1,7 @@
 package co.uk.basedapps.vpn.ui.screens.cities
 
-import co.uk.basedapps.vpn.common.Status
-import co.uk.basedapps.vpn.common.ViewStateHolder
+import co.uk.basedapps.vpn.common.state.Status
+import co.uk.basedapps.vpn.common.state.ViewStateHolder
 import co.uk.basedapps.vpn.network.model.City
 import co.uk.basedapps.vpn.network.model.Country
 import javax.inject.Inject
@@ -13,10 +13,10 @@ constructor() : ViewStateHolder<CitiesScreenState, CitiesScreenEffect>(
 )
 
 data class CitiesScreenState(
-  val status: Status = Status.Loading,
-  val countryId: Int? = null,
-  val country: Country? = null,
-  val cities: List<City> = emptyList(),
+    val status: Status = Status.Loading,
+    val countryId: Int? = null,
+    val country: Country? = null,
+    val cities: List<City> = emptyList(),
 )
 
 sealed interface CitiesScreenEffect {

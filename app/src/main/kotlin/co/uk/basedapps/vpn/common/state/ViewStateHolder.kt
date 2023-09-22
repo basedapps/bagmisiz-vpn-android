@@ -1,4 +1,4 @@
-package co.uk.basedapps.vpn.common
+package co.uk.basedapps.vpn.common.state
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
