@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -12,9 +13,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import co.uk.basedapps.domain_wireguard.core.init.WireguardInitializer
+import co.uk.basedapps.vpn.storage.BasedStorage
 import co.uk.basedapps.vpn.ui.screens.cities.CitiesScreen
 import co.uk.basedapps.vpn.ui.screens.countries.CountriesScreen
 import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreen
+import co.uk.basedapps.vpn.ui.screens.intro.IntroScreen
 import co.uk.basedapps.vpn.ui.screens.settings.SettingsScreen
 import co.uk.basedapps.vpn.ui.theme.BasedVPNTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,6 +30,9 @@ class MainActivity : ComponentActivity() {
   @Inject
   lateinit var wireguardInitializer: WireguardInitializer
 
+  @Inject
+  lateinit var basedStorage: BasedStorage
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setupVPN()
@@ -36,10 +42,24 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         NavHost(
           navController = navController,
-          startDestination = Destination.Dashboard,
+          startDestination = when {
+            basedStorage.isOnboardingShown().not() -> Destination.Intro
+            else -> Destination.Dashboard
+          },
           enterTransition = { EnterTransition.None },
           exitTransition = { ExitTransition.None },
         ) {
+          composable(Destination.Intro) {
+            LaunchedEffect(Unit) {
+              basedStorage.onOnboardingShown()
+            }
+            IntroScreen(
+              navigateToDashboard = {
+                navController.popBackStack()
+                navController.navigate(Destination.Dashboard)
+              },
+            )
+          }
           composable(Destination.Dashboard) {
             DashboardScreen(
               navigateToCountries = { navController.navigate(Destination.Countries) },
@@ -90,6 +110,7 @@ fun ComponentActivity.setFullScreen() {
 }
 
 object Destination {
+  const val Intro = "intro"
   const val Dashboard = "dashboard"
   const val Countries = "countries"
   const val Cities = "countries/{${Args.CountryId}}/cities"

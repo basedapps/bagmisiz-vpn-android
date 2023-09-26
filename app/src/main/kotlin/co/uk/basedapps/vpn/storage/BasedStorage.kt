@@ -26,6 +26,8 @@ class BasedStorage
 
   private var protocolPref by prefs.delegate("selected_protocol", "")
 
+  private var onboardingPref by prefs.delegate("onboarding_shown", false)
+
   fun storeToken(token: String) {
     tokenPref = token
   }
@@ -54,4 +56,10 @@ class BasedStorage
   }
 
   fun getVpnProtocol(): Protocol = Protocol.fromString(protocolPref)
+
+  fun isOnboardingShown() = onboardingPref
+
+  fun onOnboardingShown() {
+    onboardingPref = true
+  }
 }

@@ -39,6 +39,19 @@
     <string name="settings_logs_description">Copy to clipboard</string>
     <string name="settings_logs_success">Logs copied to clipboard</string>
 
+    <string name="intro_page1_title">Welcome to Bagimsiz\nFree Decentralized VPN</string>
+    <string name="intro_page2_title">What is a decentralized VPN?</string>
+    <string name="intro_page2_block1">A decentralized VPN is a VPN application that does not need to earn your trust because anyone can verify how it operates under the hood. Also all of the servers in a decentralized VPN are hosted by members of the public just like you, and the application creator does not manage the servers.</string>
+    <string name="intro_page2_block2">Unlike other popular VPN applications which promise security while storing your data and information, decentralized VPN applications such as Bagimsiz which are built on the Sentinel blockchain cannot monitor or track your data and this claim can be fully proven.</string>
+    <string name="intro_page3_title">Assurances of Bagimsiz dVPN</string>
+    <string name="intro_page3_block1">Bagimisiz dVPN does not store your data or monitor how you are using the internet</string>
+    <string name="intro_page3_block2">Bagimisiz dVPN does not have hidden code behind the scenes unlike other popular VPN apps</string>
+    <string name="intro_page3_block3">Bagimisiz dVPN cannot and will not cooperate with governments or other agencies as it has no information on you</string>
+    <string name="intro_btn_next">Next</string>
+    <string name="intro_btn_get_started">Get Started</string>
+    <string name="intro_sentinel_text">To find out more visit:</string>
+    <string name="intro_sentinel_link">Sentinel.co</string>
+
     <string name="error_generic_title">Something went wrong</string>
     <string name="error_generic_description">Please check your Internet connection and try again later</string>
 </resources>

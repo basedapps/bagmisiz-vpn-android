@@ -38,6 +38,17 @@
     <string name="settings_logs_description">Panoya kopyala</string>
     <string name="settings_logs_success">Günlükler panoya kopyalandı</string>
 
+    <string name="intro_page1_title">Welcome to Bagimsiz\nFree Decentralized VPN</string>
+    <string name="intro_page2_title">Merkezi olmayan VPN nedir?</string>
+    <string name="intro_page2_block1">Merkezi olmayan bir VPN, güveninizi kazanmasına gerek olmayan bir VPN uygulamasıdır çünkü herkes onun gizli olarak nasıl çalıştığını doğrulayabilir. Ayrıca merkezi olmayan bir VPN\'deki tüm sunucular, tıpkı sizin gibi halkın üyeleri tarafından barındırılır ve uygulama oluşturucu, sunucuları yönetmez.</string>
+    <string name="intro_page2_block2">Verilerinizi ve bilgilerinizi saklarken güvenlik vaat eden diğer popüler VPN uygulamalarından farklı olarak Sentinel blockchain üzerine kurulu Bagimsiz gibi merkezi olmayan VPN uygulamaları verilerinizi izleyemez veya takip edemez ve bu iddia tamamen kanıtlanabilir.</string>
+    <string name="intro_page3_title">Bağımsız dVPN Güvencesi</string>
+    <string name="intro_page3_block1">Bagimizsiz dVPN verilerinizi saklamaz veya interneti nasıl kullandığınızı izlemez</string>
+    <string name="intro_page3_block2">Bagimizsiz dVPN, diğer popüler VPN uygulamalarının aksine perde arkasında gizli koda sahip değildir</string>
+    <string name="intro_page3_block3">Bagimizsiz dVPN sizin hakkınızda hiçbir bilgiye sahip olmadığı için hükümetler veya diğer kurumlarla işbirliği yapamaz ve yapmayacaktır</string>
+    <string name="intro_btn_next">Next</string>
+    <string name="intro_btn_get_started">Get Started</string>
+
     <string name="error_generic_title">Bir şeyler yanlış gitti</string>
     <string name="error_generic_description">Lütfen İnternet bağlantınızı kontrol edin ve daha sonra tekrar deneyin.</string>
 </resources>
