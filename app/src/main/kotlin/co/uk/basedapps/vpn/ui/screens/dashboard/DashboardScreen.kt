@@ -370,6 +370,7 @@ fun BottomBar(
       SelectedCountryRow(
         selectedCity = selectedCity,
         onClick = onSelectServerClick,
+        isEnabled = state.status != Status.Loading,
       )
     }
   }
@@ -379,12 +380,13 @@ fun BottomBar(
 fun SelectedCountryRow(
   selectedCity: SelectedCity,
   onClick: () -> Unit,
+  isEnabled: Boolean,
 ) {
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
       .clip(RoundedCornerShape(100))
-      .clickable(onClick = onClick)
+      .clickable(isEnabled, onClick = onClick)
       .height(54.dp)
       .background(Color(0xFF262932))
       .padding(horizontal = 16.dp)

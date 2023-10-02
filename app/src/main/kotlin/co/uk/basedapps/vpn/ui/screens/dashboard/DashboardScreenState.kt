@@ -12,11 +12,11 @@ constructor() : ViewStateHolder<DashboardScreenState, DashboardScreenEffect>(
 )
 
 data class DashboardScreenState(
-    val status: Status = Status.Data,
-    val selectedCity: SelectedCity? = null,
-    val ipAddress: String = "",
-    val isConnected: Boolean = false,
-    val isErrorAlertVisible: Boolean = false,
+  val status: Status = Status.Data,
+  val selectedCity: SelectedCity? = null,
+  val ipAddress: String = "",
+  val isConnected: Boolean = false,
+  val isErrorAlertVisible: Boolean = false,
 )
 
 sealed interface DashboardScreenEffect {
