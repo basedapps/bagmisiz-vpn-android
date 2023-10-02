@@ -6,7 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,36 +14,35 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,17 +50,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import co.uk.basedapps.domain_wireguard.core.init.getVpnPermissionRequest
 import co.uk.basedapps.vpn.R
 import co.uk.basedapps.vpn.common.compose.EffectHandler
-import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.common.compose.TopBarIconsColorEffect
 import co.uk.basedapps.vpn.common.flags.CountryFlag
+import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.storage.SelectedCity
 import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenEffect as Effect
 import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenState as State
-import co.uk.basedapps.vpn.ui.theme.BasedAppColor
+import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButton
 import co.uk.basedapps.vpn.ui.theme.BasedVPNTheme
 import co.uk.basedapps.vpn.ui.widget.BasedAlertDialog
-import co.uk.basedapps.vpn.ui.widget.BasedButton
-import co.uk.basedapps.vpn.ui.widget.ButtonStyle
 import co.uk.basedapps.vpn.ui.widget.ErrorScreen
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -92,7 +89,7 @@ fun DashboardScreen(
     viewModel.onPermissionsResult(result.resultCode == Activity.RESULT_OK)
   }
 
-  TopBarIconsColorEffect(isDark = true)
+  TopBarIconsColorEffect(isDark = false)
 
   EffectHandler(viewModel.stateHolder.effects) { effect ->
     when (effect) {
@@ -178,7 +175,11 @@ private fun Content(
 ) {
   Box(
     modifier = Modifier
-      .background(Color.White)
+      .background(
+        brush = Brush.verticalGradient(
+          colors = listOf(Color(0xFF22262E), Color(0xFF14161B)),
+        ),
+      )
       .fillMaxSize(),
   ) {
     Column {
@@ -187,20 +188,18 @@ private fun Content(
         onSettingsClick = onSettingsClick,
       )
       Map(
+        state = state,
+        mapPositionState = mapPositionState,
         modifier = Modifier
           .weight(1f)
           .padding(horizontal = 16.dp)
           .clip(RoundedCornerShape(8.dp)),
-        mapPositionState = mapPositionState,
       )
       BottomBar(
         state = state,
         onConnectClick = onConnectClick,
         onSelectServerClick = onSelectServerClick,
       )
-    }
-    if (state.status is Status.Loading) {
-      LoadingOverlay()
     }
     if (state.isErrorAlertVisible) {
       BasedAlertDialog(
@@ -214,30 +213,12 @@ private fun Content(
 }
 
 @Composable
-private fun LoadingOverlay() {
-  Box(
-    contentAlignment = Alignment.Center,
-    modifier = Modifier
-      .clickable(
-        interactionSource = remember { MutableInteractionSource() },
-        indication = null,
-        onClick = {},
-      )
-      .navigationBarsPadding()
-      .background(Color.Black.copy(alpha = 0.3f))
-      .fillMaxSize(),
-  ) {
-    CircularProgressIndicator(
-      color = Color.White,
-    )
-  }
-}
-
-@Composable
 private fun Map(
-  modifier: Modifier = Modifier,
+  state: State,
   mapPositionState: CameraPositionState,
+  modifier: Modifier = Modifier,
 ) {
+  val context = LocalContext.current
   val uiSettings by remember {
     mutableStateOf(
       MapUiSettings(
@@ -250,11 +231,41 @@ private fun Map(
       ),
     )
   }
-  GoogleMap(
-    uiSettings = uiSettings,
-    cameraPositionState = mapPositionState,
+  val countryLabel = remember(state.selectedCity, state.isConnected) {
+    if (state.isConnected) {
+      state.selectedCity?.countryName ?: ""
+    } else {
+      context.getString(R.string.dashboard_current_location)
+    }
+  }
+  Box(
     modifier = modifier,
-  )
+  ) {
+    GoogleMap(
+      uiSettings = uiSettings,
+      cameraPositionState = mapPositionState,
+    )
+    Column(
+      horizontalAlignment = Alignment.CenterHorizontally,
+      modifier = Modifier
+        .padding(top = 12.dp)
+        .fillMaxWidth(),
+    ) {
+      Text(
+        text = countryLabel,
+        color = Color.White,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.W700,
+      )
+      Spacer(modifier = Modifier.size(8.dp))
+      Text(
+        text = state.ipAddress,
+        color = Color(0xFFACB3BD),
+        fontSize = 14.sp,
+        fontWeight = FontWeight.W400,
+      )
+    }
+  }
 }
 
 @Composable
@@ -263,72 +274,70 @@ private fun TopBar(
   onSettingsClick: () -> Unit,
 ) {
   val context = LocalContext.current
-  Box {
-    Box(
-      contentAlignment = Alignment.Center,
-      modifier = Modifier
-        .statusBarsPadding()
-        .padding(top = 8.dp, bottom = 24.dp)
-        .padding(horizontal = 16.dp)
-        .fillMaxWidth(),
+  Box(
+    modifier = Modifier
+      .statusBarsPadding()
+      .padding(horizontal = 20.dp)
+      .padding(top = 20.dp, bottom = 32.dp)
+      .fillMaxWidth(),
+  ) {
+    Button(
+      colors = ButtonDefaults.buttonColors(
+        containerColor = Color(0xFF1F2B36),
+      ),
+      shape = CircleShape,
+      contentPadding = PaddingValues(0.dp),
+      onClick = onSettingsClick,
+      modifier = Modifier.size(40.dp),
     ) {
-      Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(horizontal = 50.dp),
-      ) {
-        val ipLabel = remember(state.ipAddress) {
-          buildString {
-            append(context.getString(R.string.dashboard_your_ip).uppercase())
-            append(" • ")
-            append(state.ipAddress)
-          }
-        }
-        Text(
-          text = ipLabel,
-          color = when (state.isConnected) {
-            true -> BasedAppColor.TextPrimary
-            false -> BasedAppColor.Accent
+      Icon(
+        painter = painterResource(R.drawable.ic_settings),
+        contentDescription = stringResource(R.string.dashboard_menu_settings),
+        modifier = Modifier.size(16.dp),
+        tint = Color.White,
+      )
+    }
+    Column(
+      horizontalAlignment = Alignment.CenterHorizontally,
+      modifier = Modifier.fillMaxWidth(),
+    ) {
+      val protectedLabel = remember(state.isConnected) {
+        context.getString(
+          when (state.isConnected) {
+            true -> R.string.dashboard_protected
+            false -> R.string.dashboard_not_protected
           },
-          fontSize = 12.sp,
-          fontWeight = FontWeight.Medium,
-        )
-        val isConnectedLabel = remember(state.isConnected) {
-          context.getString(
-            when (state.isConnected) {
-              true -> R.string.dashboard_connected_to_vpn
-              false -> R.string.dashboard_disconnected_from_vpn
-            },
-          ).uppercase()
-        }
-        Text(
-          text = isConnectedLabel,
-          color = when (state.isConnected) {
-            true -> BasedAppColor.OnLine
-            false -> BasedAppColor.TextSecondary
-          },
-          fontSize = 16.sp,
-          fontWeight = FontWeight.Medium,
-          maxLines = 1,
         )
       }
-      Button(
-        colors = ButtonDefaults.buttonColors(
-          containerColor = BasedAppColor.ButtonTertiary,
-        ),
-        shape = RoundedCornerShape(8.dp),
-        contentPadding = PaddingValues(0.dp),
-        onClick = onSettingsClick,
+      Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-          .size(44.dp)
-          .align(Alignment.CenterEnd),
+          .clip(RoundedCornerShape(100.dp))
+          .background(color = Color(0xFF101921))
+          .fillMaxWidth(0.6f),
       ) {
-        Icon(
-          painter = painterResource(R.drawable.ic_settings),
-          contentDescription = stringResource(R.string.dashboard_menu_settings),
-          modifier = Modifier.size(24.dp),
-          tint = BasedAppColor.ButtonTertiaryIcon,
+        Image(
+          painter = painterResource(
+            when (state.isConnected) {
+              true -> R.drawable.ic_connected
+              false -> R.drawable.ic_disconnected
+            },
+          ),
+          contentDescription = protectedLabel,
+          modifier = Modifier.size(16.dp),
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+          text = protectedLabel,
+          color = when (state.isConnected) {
+            true -> Color.White
+            false -> Color(0xFF54687A)
+          },
+          fontSize = 14.sp,
+          fontWeight = FontWeight.W500,
+          maxLines = 1,
+          modifier = Modifier.padding(vertical = 10.dp),
         )
       }
     }
@@ -341,49 +350,58 @@ fun BottomBar(
   onConnectClick: () -> Unit,
   onSelectServerClick: () -> Unit,
 ) {
-  Box {
-    Column(
-      modifier = Modifier
-        .padding(horizontal = 16.dp)
-        .padding(top = 24.dp, bottom = 16.dp)
-        .navigationBarsPadding(),
-    ) {
-      val selectedCity = state.selectedCity
-      if (selectedCity != null) {
-        SelectedCityRow(
-          selectedCity = selectedCity,
-          onClick = onSelectServerClick,
-        )
-        Spacer(modifier = Modifier.size(16.dp))
-      }
-      BasedButton(
-        text = stringResource(
-          when (state.isConnected) {
-            true -> R.string.dashboard_disconnect_from_vpn
-            false -> R.string.dashboard_connect_to_vpn
-          },
-        ),
-        style = if (state.isConnected) ButtonStyle.Secondary else ButtonStyle.Primary,
-        onClick = onConnectClick,
-        iconRes = if (state.isConnected) null else R.drawable.ic_rocket,
-        modifier = Modifier.fillMaxWidth(),
+  Column(
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(horizontal = 45.dp)
+      .padding(top = 24.dp, bottom = 24.dp)
+      .navigationBarsPadding(),
+  ) {
+    val buttonState = when {
+      state.status is Status.Loading -> VpnButtonState.Connecting
+      state.isConnected -> VpnButtonState.Connected
+      else -> VpnButtonState.Disconnected
+    }
+    VpnButton(buttonState, onConnectClick)
+    Spacer(modifier = Modifier.size(20.dp))
+    val stateLabel = stringResource(
+      when {
+        state.status is Status.Loading -> R.string.dashboard_state_connecting
+        state.isConnected -> R.string.dashboard_state_connected
+        else -> R.string.dashboard_state_disconnected
+      },
+    )
+    Text(
+      text = stateLabel,
+      color = Color.White,
+      fontWeight = FontWeight.W600,
+      fontSize = 16.sp,
+    )
+    val selectedCity = state.selectedCity
+    if (selectedCity != null) {
+      Spacer(modifier = Modifier.size(26.dp))
+      SelectedCountryRow(
+        selectedCity = selectedCity,
+        onClick = onSelectServerClick,
       )
     }
   }
 }
 
 @Composable
-fun SelectedCityRow(
+fun SelectedCountryRow(
   selectedCity: SelectedCity,
   onClick: () -> Unit,
 ) {
   Row(
+    verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
-      .clip(RoundedCornerShape(8.dp))
+      .clip(RoundedCornerShape(100))
       .clickable(onClick = onClick)
-      .heightIn(min = 60.dp)
-      .background(BasedAppColor.Elevation)
-      .padding(16.dp)
+      .height(54.dp)
+      .background(Color(0xFF262932))
+      .padding(horizontal = 16.dp)
       .fillMaxWidth(),
   ) {
     val flagRes = selectedCity.countryFlag?.res
@@ -393,33 +411,34 @@ fun SelectedCityRow(
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = Modifier
-          .size(width = 36.dp, height = 24.dp)
-          .clip(RoundedCornerShape(4.dp)),
-      )
-    } else {
-      Box(
-        modifier = Modifier
-          .background(BasedAppColor.Divider)
-          .size(width = 36.dp, height = 24.dp)
-          .clip(RoundedCornerShape(4.dp)),
+          .size(width = 28.dp, height = 28.dp)
+          .clip(CircleShape),
       )
     }
     Spacer(modifier = Modifier.size(16.dp))
     Text(
-      text = buildAnnotatedString {
-        withStyle(style = SpanStyle(BasedAppColor.TextPrimary)) {
-          append(selectedCity.countryName)
-        }
-        withStyle(style = SpanStyle(BasedAppColor.TextSecondary)) {
-          append(" • ")
-          append(selectedCity.name)
-        }
-      },
-      overflow = TextOverflow.Ellipsis,
-      maxLines = 1,
-      fontSize = 18.sp,
+      text = selectedCity.countryName,
+      color = Color.White,
+      fontWeight = FontWeight.W500,
+      fontSize = 16.sp,
+    )
+    Spacer(modifier = Modifier.weight(1f))
+    Icon(
+      painter = painterResource(R.drawable.ic_arrow),
+      contentDescription = null,
+      tint = Color.White,
+      modifier = Modifier
+        .size(24.dp)
+        .padding(5.dp),
     )
   }
+}
+
+@Stable
+enum class VpnButtonState {
+  Connected,
+  Disconnected,
+  Connecting,
 }
 
 @Preview
