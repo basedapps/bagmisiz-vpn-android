@@ -24,8 +24,8 @@ navigation = "2.7.2"
 datastore = "1.0.0"
 wireguard = "1.0.20211029"
 hiltNavigation = "1.0.0"
-mapsCompose = "2.10.0"
-maps = "18.1.0"
+mapBox = "11.0.0-beta.1"
+mapBoxCompose = "0.1.0"
 
 [libraries]
 # Android
@@ -66,8 +66,9 @@ gson-converter = { module = "com.squareup.retrofit2:converter-gson", version.ref
 # Navigation
 navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 # Maps
-google-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "maps" }
-google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+map-box-android = { module = "com.mapbox.maps:android", version.ref = "mapBox" }
+map-box-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapBoxCompose" }
+
 # Other
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }

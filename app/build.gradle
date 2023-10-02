@@ -23,14 +23,13 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "String", "API_URL", "\"https://vpn-api-staging.basedapps.co.uk\""
-            resValue "string", "google_maps_key", System.getenv("BASED_VPN_MAPS_KEY")
+            // buildConfigField "String", "API_URL", "\"https://vpn-api-staging.basedapps.co.uk\""
+            buildConfigField "String", "API_URL", "\"https://vpn-api.basedapps.co.uk\""
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "API_URL", "\"https://vpn-api.basedapps.co.uk\""
-            resValue "string", "google_maps_key", System.getenv("BASED_VPN_MAPS_KEY")
         }
     }
     compileOptions {
@@ -73,8 +72,8 @@ dependencies {
     implementation libs.gson
     implementation libs.gson.converter
     implementation libs.accompanist.systemuicontroller
-    implementation libs.google.maps
-    implementation libs.google.maps.compose
+    implementation libs.map.box.compose
+    implementation libs.map.box.android
 
     kapt libs.hilt.compiler
 

@@ -1,3 +1,5 @@
+@file:OptIn(MapboxExperimental::class)
+
 package co.uk.basedapps.vpn.ui.screens.dashboard
 
 import android.app.Activity
@@ -29,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -56,17 +57,17 @@ import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.storage.SelectedCity
 import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenEffect as Effect
 import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenState as State
+import co.uk.basedapps.vpn.ui.screens.dashboard.widget.MapboxConfiguredMap
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButton
 import co.uk.basedapps.vpn.ui.theme.BasedVPNTheme
 import co.uk.basedapps.vpn.ui.widget.BasedAlertDialog
 import co.uk.basedapps.vpn.ui.widget.ErrorScreen
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.CameraPositionState
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.rememberCameraPositionState
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.MapboxExperimental
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -81,7 +82,7 @@ fun DashboardScreen(
   val context = LocalContext.current
 
   val scope = rememberCoroutineScope()
-  val mapPositionState = rememberCameraPositionState()
+  val mapViewportState = rememberMapViewportState {}
 
   val vpnPermissionRequest = rememberLauncherForActivityResult(
     ActivityResultContracts.StartActivityForResult(),
@@ -108,14 +109,14 @@ fun DashboardScreen(
 
       is Effect.ChangeMapPosition -> {
         scope.launch(Dispatchers.Main) {
-          mapPositionState.animate(
-            update = CameraUpdateFactory.newCameraPosition(
-              CameraPosition.fromLatLngZoom(
-                LatLng(effect.latitude, effect.longitude),
-                10f,
-              ),
-            ),
-            durationMs = 2000,
+          mapViewportState.flyTo(
+            animationOptions = MapAnimationOptions.mapAnimationOptions {
+              duration(2000)
+            },
+            cameraOptions = CameraOptions.Builder()
+              .center(Point.fromLngLat(effect.longitude, effect.latitude))
+              .zoom(9.0)
+              .build(),
           )
         }
       }
@@ -124,7 +125,7 @@ fun DashboardScreen(
 
   DashboardScreenStateless(
     state = state,
-    mapPositionState = mapPositionState,
+    mapViewportState = mapViewportState,
     onConnectClick = viewModel::onConnectClick,
     onSelectServerClick = viewModel::onSelectServerClick,
     onSettingsClick = viewModel::onSettingsClick,
@@ -137,7 +138,7 @@ fun DashboardScreen(
 @Composable
 fun DashboardScreenStateless(
   state: State,
-  mapPositionState: CameraPositionState,
+  mapViewportState: MapViewportState,
   onConnectClick: () -> Unit,
   onSelectServerClick: () -> Unit,
   onSettingsClick: () -> Unit,
@@ -153,7 +154,7 @@ fun DashboardScreenStateless(
 
     else -> Content(
       state = state,
-      mapPositionState = mapPositionState,
+      mapViewportState = mapViewportState,
       onConnectClick = onConnectClick,
       onSelectServerClick = onSelectServerClick,
       onSettingsClick = onSettingsClick,
@@ -166,7 +167,7 @@ fun DashboardScreenStateless(
 @Composable
 private fun Content(
   state: State,
-  mapPositionState: CameraPositionState,
+  mapViewportState: MapViewportState,
   onConnectClick: () -> Unit,
   onSelectServerClick: () -> Unit,
   onSettingsClick: () -> Unit,
@@ -189,10 +190,10 @@ private fun Content(
       )
       Map(
         state = state,
-        mapPositionState = mapPositionState,
+        mapViewportState = mapViewportState,
         modifier = Modifier
           .weight(1f)
-          .padding(horizontal = 16.dp)
+          .padding(horizontal = 32.dp)
           .clip(RoundedCornerShape(8.dp)),
       )
       BottomBar(
@@ -215,22 +216,10 @@ private fun Content(
 @Composable
 private fun Map(
   state: State,
-  mapPositionState: CameraPositionState,
+  mapViewportState: MapViewportState,
   modifier: Modifier = Modifier,
 ) {
   val context = LocalContext.current
-  val uiSettings by remember {
-    mutableStateOf(
-      MapUiSettings(
-        myLocationButtonEnabled = false,
-        zoomControlsEnabled = false,
-        scrollGesturesEnabled = false,
-        zoomGesturesEnabled = false,
-        tiltGesturesEnabled = false,
-        rotationGesturesEnabled = false,
-      ),
-    )
-  }
   val countryLabel = remember(state.selectedCity, state.isConnected) {
     if (state.isConnected) {
       state.selectedCity?.countryName ?: ""
@@ -241,10 +230,7 @@ private fun Map(
   Box(
     modifier = modifier,
   ) {
-    GoogleMap(
-      uiSettings = uiSettings,
-      cameraPositionState = mapPositionState,
-    )
+    MapboxConfiguredMap(mapViewportState)
     Column(
       horizontalAlignment = Alignment.CenterHorizontally,
       modifier = Modifier
@@ -456,7 +442,7 @@ fun DashboardScreenPreview() {
         ),
         ipAddress = "91.208.132.23",
       ),
-      mapPositionState = rememberCameraPositionState(),
+      mapViewportState = rememberMapViewportState(),
       onConnectClick = {},
       onSelectServerClick = {},
       onSettingsClick = {},

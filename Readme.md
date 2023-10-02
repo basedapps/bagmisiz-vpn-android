@@ -4,7 +4,7 @@
 
 Before building and running the project, some initial setup is needed.
 
-BuildConfig file needs access to `BASED_VPN_MAPS_KEY` system environment variable. This variable can be set through terminal using commands in next section.
+BuildConfig file needs access to `MAP_BOX_PRIVATE_KEY` system environment variable. This variable can be set through terminal using commands in next section.
 
 <details><summary>For bash</summary>
 <p>
@@ -17,7 +17,7 @@ BuildConfig file needs access to `BASED_VPN_MAPS_KEY` system environment variabl
    vim ~/.bash_profile
    vi ~/.bash_profile
    ```
-2. Add `export BASED_VPN_MAPS_KEY=XXXX`
+2. Add `export MAP_BOX_PRIVATE_KEY=XXXX`
 3. Save file
 4. Execute `source ~/.bash_profile`to load environmental variables into current session
 5. Execute `printenv` to check if variable is set
@@ -39,7 +39,7 @@ For more detailed explanation check out [Set evrionmental variable in BASH](http
    vim ~/.zshrc
    vi ~/.zshrc
    ```
-2. Add `export BASED_VPN_MAPS_KEY=XXXX`
+2. Add `export MAP_BOX_PRIVATE_KEY=XXXX`
 3. Save file
 4. Execute `source ~/.zshrc`to load environmental variables into current session
 5. Execute `printenv` to check if variable is set
