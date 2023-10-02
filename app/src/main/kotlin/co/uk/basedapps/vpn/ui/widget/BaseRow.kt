@@ -82,7 +82,7 @@ fun BaseRow(
       if (subtitle != null) {
         Spacer(modifier = Modifier.size(2.dp))
         Text(
-          text = title,
+          text = subtitle,
           color = Color.White.copy(alpha = 0.6f),
           fontWeight = FontWeight.W400,
           fontSize = 12.sp,

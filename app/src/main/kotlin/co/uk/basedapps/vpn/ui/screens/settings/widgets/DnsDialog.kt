@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,11 +39,11 @@ fun DnsDialog(
   var radioState by remember { mutableStateOf(state.currentDns) }
   AlertDialog(
     onDismissRequest = onDismissRequest,
-    containerColor = BasedAppColor.Background,
+    containerColor = Color(0xFF14161B),
     title = {
       Text(
         text = stringResource(R.string.settings_dns_change_title),
-        color = BasedAppColor.TextPrimary,
+        color = Color.White,
       )
     },
     text = {
@@ -69,7 +70,7 @@ fun DnsDialog(
             )
             Text(
               text = stringResource(dns.getLabelRes()),
-              color = BasedAppColor.TextPrimary,
+              color = Color.White,
               maxLines = 1,
             )
           }

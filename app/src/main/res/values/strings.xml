@@ -29,7 +29,8 @@
     <string name="settings_row_dns">DNS Server</string>
     <string name="settings_row_protocol">VPN protocol</string>
     <string name="settings_row_logs">App Logs</string>
-    <string name="settings_telegram_btn">Our Telegram chat</string>
+    <string name="settings_row_telegram">Our Telegram chat</string>
+    <string name="settings_row_telegram_description">Join now</string>
     <string name="settings_app_version">Version %s</string>
 
     <string name="settings_dns_cloudflare">Cloudflare DNS</string>

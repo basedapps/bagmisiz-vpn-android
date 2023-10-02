@@ -1,18 +1,13 @@
 package co.uk.basedapps.vpn.ui.screens.settings
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -24,12 +19,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,7 +36,7 @@ import co.uk.basedapps.vpn.ui.screens.settings.SettingsScreenState as State
 import co.uk.basedapps.vpn.ui.screens.settings.widgets.DnsDialog
 import co.uk.basedapps.vpn.ui.screens.settings.widgets.ProtocolDialog
 import co.uk.basedapps.vpn.ui.theme.BasedAppColor
-import co.uk.basedapps.vpn.ui.widget.TelegramButton
+import co.uk.basedapps.vpn.ui.widget.BaseRow
 import co.uk.basedapps.vpn.ui.widget.TopBar
 import co.uk.basedapps.vpn.vpn.DdsConfigurator
 import kotlinx.coroutines.launch
@@ -106,7 +101,7 @@ fun SettingsScreenStateless(
   onTelegramClick: () -> Unit,
 ) {
   Scaffold(
-    containerColor = BasedAppColor.Background,
+    containerColor = Color.Transparent,
     topBar = {
       TopBar(
         title = stringResource(R.string.settings_title),
@@ -128,6 +123,11 @@ fun SettingsScreenStateless(
         onTelegramClick = onTelegramClick,
       )
     },
+    modifier = Modifier.background(
+      brush = Brush.verticalGradient(
+        colors = listOf(Color(0xFF22262E), Color(0xFF14161B)),
+      ),
+    ),
   )
 }
 
@@ -145,34 +145,46 @@ fun Content(
   onTelegramClick: () -> Unit,
 ) {
   Box(Modifier.padding(paddingValues)) {
-    LazyVerticalGrid(
-      columns = GridCells.Fixed(2),
-      verticalArrangement = Arrangement.spacedBy(12.dp),
-      horizontalArrangement = Arrangement.spacedBy(12.dp),
-      contentPadding = PaddingValues(16.dp),
+    LazyColumn(
+      verticalArrangement = Arrangement.spacedBy(10.dp),
+      contentPadding = PaddingValues(
+        horizontal = 32.dp,
+        vertical = 16.dp,
+      ),
       modifier = Modifier.fillMaxSize(),
     ) {
       item {
-        SettingsRow(
+        BaseRow(
           title = stringResource(R.string.settings_row_dns),
-          value = state.currentDns
+          subtitle = state.currentDns
             ?.let { stringResource(it.getLabelRes()) } ?: "",
-          onItemClick = onDnsRowClick,
+          iconRes = R.drawable.ic_server,
+          onClick = onDnsRowClick,
         )
       }
       item {
-        SettingsRow(
+        BaseRow(
           title = stringResource(R.string.settings_row_protocol),
-          value = state.currentProtocol?.labelRes
+          subtitle = state.currentProtocol?.labelRes
             ?.let { stringResource(it) } ?: "",
-          onItemClick = onProtocolRowClick,
+          iconRes = R.drawable.ic_server,
+          onClick = onProtocolRowClick,
         )
       }
       item {
-        SettingsRow(
+        BaseRow(
           title = stringResource(R.string.settings_row_logs),
-          value = stringResource(R.string.settings_logs_description),
-          onItemClick = onLogsRowClick,
+          subtitle = stringResource(R.string.settings_logs_description),
+          iconRes = R.drawable.ic_server,
+          onClick = onLogsRowClick,
+        )
+      }
+      item {
+        BaseRow(
+          title = stringResource(R.string.settings_row_telegram),
+          subtitle = stringResource(R.string.settings_row_telegram_description),
+          iconRes = R.drawable.ic_server,
+          onClick = onTelegramClick,
         )
       }
     }
@@ -182,8 +194,6 @@ fun Content(
         .padding(bottom = 16.dp)
         .align(Alignment.BottomCenter),
     ) {
-      TelegramButton(onTelegramClick)
-      Spacer(modifier = Modifier.size(16.dp))
       Text(
         text = stringResource(R.string.settings_app_version, state.appVersion),
         fontSize = 16.sp,
@@ -206,41 +216,6 @@ fun Content(
       onConfirmClick = onProtocolDialogConfirmClick,
       onDismissClick = onProtocolDialogDismissClick,
       onDismissRequest = onProtocolDialogDismissClick,
-    )
-  }
-}
-
-@Composable
-private fun SettingsRow(
-  title: String,
-  value: String,
-  onItemClick: () -> Unit,
-) {
-  Column(
-    modifier = Modifier
-      .clip(RoundedCornerShape(8.dp))
-      .clickable(onClick = onItemClick)
-      .border(
-        width = 1.dp,
-        color = BasedAppColor.Divider,
-        shape = RoundedCornerShape(8.dp),
-      )
-      .padding(16.dp),
-  ) {
-    Text(
-      text = title,
-      overflow = TextOverflow.Ellipsis,
-      maxLines = 1,
-      fontSize = 16.sp,
-      color = BasedAppColor.TextPrimary,
-    )
-    Spacer(modifier = Modifier.size(2.dp))
-    Text(
-      text = value,
-      overflow = TextOverflow.Ellipsis,
-      maxLines = 1,
-      fontSize = 12.sp,
-      color = BasedAppColor.TextSecondary,
     )
   }
 }
