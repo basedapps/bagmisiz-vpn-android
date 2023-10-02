@@ -130,7 +130,7 @@ private fun Data(
     items(state.countries) { country ->
       BaseRow(
         title = country.name,
-        iconRes = country.flag?.res,
+        imageRes = country.flag?.res,
         onClick = { onItemClick(country) },
       )
     }

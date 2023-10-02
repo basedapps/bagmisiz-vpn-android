@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +32,7 @@ import co.uk.basedapps.vpn.R
 fun BaseRow(
   title: String,
   subtitle: String? = null,
+  @DrawableRes imageRes: Int? = null,
   @DrawableRes iconRes: Int? = null,
   onClick: () -> Unit,
 ) {
@@ -44,17 +46,32 @@ fun BaseRow(
       .padding(horizontal = 16.dp)
       .fillMaxWidth(),
   ) {
-    if (iconRes != null) {
+    if (imageRes != null) {
       Image(
-        painter = painterResource(iconRes),
+        painter = painterResource(imageRes),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = Modifier
           .size(width = 28.dp, height = 28.dp)
           .clip(CircleShape),
       )
-      Spacer(modifier = Modifier.size(16.dp))
+    } else if (iconRes != null) {
+      Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+          .clip(CircleShape)
+          .background(Color(0xFF2C3037))
+          .size(28.dp),
+      ) {
+        Icon(
+          painter = painterResource(iconRes),
+          contentDescription = null,
+          tint = Color.White,
+          modifier = Modifier.size(12.dp),
+        )
+      }
     }
+    Spacer(modifier = Modifier.size(16.dp))
     Column {
       Text(
         text = title,
@@ -63,12 +80,12 @@ fun BaseRow(
         fontSize = 16.sp,
       )
       if (subtitle != null) {
-        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(2.dp))
         Text(
           text = title,
-          color = Color.White,
-          fontWeight = FontWeight.W600,
-          fontSize = 16.sp,
+          color = Color.White.copy(alpha = 0.6f),
+          fontWeight = FontWeight.W400,
+          fontSize = 12.sp,
         )
       }
     }
