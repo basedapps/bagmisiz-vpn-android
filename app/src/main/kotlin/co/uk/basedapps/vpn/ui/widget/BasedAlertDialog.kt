@@ -5,6 +5,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 
@@ -21,16 +22,16 @@ fun BasedAlertDialog(
     title = {
       Text(
         text = title,
-        color = BasedAppColor.TextPrimary,
+        color = Color.White,
       )
     },
     text = {
       Text(
         text = description,
-        color = BasedAppColor.TextSecondary,
+        color = Color.White,
       )
     },
-    containerColor = BasedAppColor.Background,
+    containerColor = Color(0xFF14161B),
     confirmButton = {
       Button(
         colors = ButtonDefaults.buttonColors(

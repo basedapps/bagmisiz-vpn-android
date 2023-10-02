@@ -1,5 +1,6 @@
 package co.uk.basedapps.vpn.ui.widget
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,7 +38,12 @@ fun ErrorScreen(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier
       .padding(paddingValues)
-      .fillMaxSize(),
+      .fillMaxSize()
+      .background(
+        brush = Brush.verticalGradient(
+          colors = listOf(Color(0xFF22262E), Color(0xFF14161B)),
+        ),
+      ),
   ) {
     Icon(
       painter = painterResource(R.drawable.ic_error),
@@ -48,7 +56,7 @@ fun ErrorScreen(
       text = title,
       fontSize = 24.sp,
       textAlign = TextAlign.Center,
-      color = BasedAppColor.TextPrimary,
+      color = Color.White,
       modifier = Modifier.fillMaxWidth(),
     )
     Spacer(modifier = Modifier.size(20.dp))
@@ -56,7 +64,7 @@ fun ErrorScreen(
       text = description,
       fontSize = 14.sp,
       textAlign = TextAlign.Center,
-      color = BasedAppColor.TextSecondary,
+      color = Color.White,
       modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 48.dp),
