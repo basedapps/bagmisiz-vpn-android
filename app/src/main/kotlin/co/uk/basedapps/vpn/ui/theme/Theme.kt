@@ -52,7 +52,7 @@ fun BasedVPNTheme(
     }
   }
 
-  TopBarIconsColorEffect(isDark = true)
+  TopBarIconsColorEffect(isDark = false)
 
   MaterialTheme(
     colorScheme = colorScheme,

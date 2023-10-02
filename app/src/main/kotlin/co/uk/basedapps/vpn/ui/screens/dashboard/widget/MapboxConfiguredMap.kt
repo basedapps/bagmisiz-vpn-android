@@ -38,4 +38,4 @@ fun MapboxConfiguredMap(
   )
 }
 
-private const val MapBoxStyleUrl = "mapbox://styles/basedapps/cln33p62y035301pbgtq42erk"
+private const val MapBoxStyleUrl = "mapbox://styles/basedapps/cln90jstc00bg01p93ae4f4om"

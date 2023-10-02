@@ -51,7 +51,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import co.uk.basedapps.domain_wireguard.core.init.getVpnPermissionRequest
 import co.uk.basedapps.vpn.R
 import co.uk.basedapps.vpn.common.compose.EffectHandler
-import co.uk.basedapps.vpn.common.compose.TopBarIconsColorEffect
 import co.uk.basedapps.vpn.common.flags.CountryFlag
 import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.storage.SelectedCity
@@ -89,8 +88,6 @@ fun DashboardScreen(
   ) { result ->
     viewModel.onPermissionsResult(result.resultCode == Activity.RESULT_OK)
   }
-
-  TopBarIconsColorEffect(isDark = false)
 
   EffectHandler(viewModel.stateHolder.effects) { effect ->
     when (effect) {
@@ -353,7 +350,7 @@ fun BottomBar(
     Spacer(modifier = Modifier.size(20.dp))
     val stateLabel = stringResource(
       when {
-        state.status is Status.Loading -> R.string.dashboard_state_connecting
+        state.status is Status.Loading -> R.string.dashboard_state_loading
         state.isConnected -> R.string.dashboard_state_connected
         else -> R.string.dashboard_state_disconnected
       },

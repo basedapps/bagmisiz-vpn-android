@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.uk.basedapps.vpn.R
-import co.uk.basedapps.vpn.common.compose.TopBarIconsColorEffect
 import co.uk.basedapps.vpn.common.ext.openWeb
 import co.uk.basedapps.vpn.ui.screens.intro.widget.BulletBlock
 import co.uk.basedapps.vpn.ui.screens.intro.widget.PagerIndicator
@@ -50,8 +49,6 @@ fun IntroScreen(
   )
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
-
-  TopBarIconsColorEffect(isDark = false)
 
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,

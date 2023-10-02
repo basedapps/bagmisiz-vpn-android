@@ -16,7 +16,7 @@
     <string name="dashboard_protected">Protected</string>
     <string name="dashboard_not_protected">Not Protected</string>
     <string name="dashboard_current_location">Current location</string>
-    <string name="dashboard_state_connecting">Connecting…</string>
+    <string name="dashboard_state_loading">Loading…</string>
     <string name="dashboard_state_connected">Securely Connected</string>
     <string name="dashboard_state_disconnected">Not Connected</string>
 
