@@ -68,12 +68,15 @@ class DashboardScreenViewModel
     var refreshAttempt = 0
     var ipModel: IpModel
     do {
+      Timber.tag(Tag).d("Reset connection")
+      repository.resetConnection()
+      delay(300)
       Timber.tag(Tag).d("Refresh IP $refreshAttempt")
       refreshAttempt++
       ipModel = repository.getIp().getOrNull()?.data ?: return
       Timber.tag(Tag).d("New IP: ${ipModel.ip}")
       delay(1000)
-    } while (ipModel.ip == currentIp && refreshAttempt <= 5)
+    } while (ipModel.ip == currentIp && refreshAttempt <= 3)
     stateHolder.updateState { copy(ipAddress = ipModel.ip) }
     stateHolder.sendEffect(
       Effect.ChangeMapPosition(
