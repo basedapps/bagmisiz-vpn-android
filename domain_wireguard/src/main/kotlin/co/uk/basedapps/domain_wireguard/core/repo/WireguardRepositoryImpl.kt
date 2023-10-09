@@ -264,7 +264,7 @@ class WireguardRepositoryImpl(
         )
       }
       haveLoaded = true
-      restoreState(isForce = true)
+      restoreState(isForce = true) // todo
       true
     } catch (e: Exception) {
       Timber.e(e)

@@ -13,18 +13,25 @@ constructor() : ViewStateHolder<DashboardScreenState, DashboardScreenEffect>(
 
 data class DashboardScreenState(
   val status: Status = Status.Data,
+  val vpnStatus: VpnStatus = VpnStatus.Disconnected,
   val selectedCity: SelectedCity? = null,
   val ipAddress: String = "",
-  val isConnected: Boolean = false,
   val isErrorAlertVisible: Boolean = false,
 )
 
 sealed interface DashboardScreenEffect {
-  object CheckVpnPermission : DashboardScreenEffect
-  object ShowSelectServer : DashboardScreenEffect
-  object ShowSettings : DashboardScreenEffect
+  data object CheckVpnPermission : DashboardScreenEffect
+  data object ShowSelectServer : DashboardScreenEffect
+  data object ShowSettings : DashboardScreenEffect
   data class ChangeMapPosition(
     val latitude: Double,
     val longitude: Double,
   ) : DashboardScreenEffect
+}
+
+sealed interface VpnStatus {
+  data object Disconnected : VpnStatus
+  data object Connecting : VpnStatus
+  data object Connected : VpnStatus
+  data object Disconnecting : VpnStatus
 }

@@ -107,7 +107,8 @@ class DashboardScreenViewModel
 
   private fun onCityChanged(city: SelectedCity?) {
     Timber.tag(Tag).d("City changed to ${city?.name} (prev: ${state.selectedCity?.name})")
-    if (state.selectedCity != null && state.isConnected) {
+    val isConnected = state.vpnStatus == VpnStatus.Connected
+    if (state.selectedCity != null && isConnected) {
       disconnect()
     }
     stateHolder.updateState {
@@ -117,11 +118,11 @@ class DashboardScreenViewModel
 
   fun onConnectClick() {
     if (state.selectedCity != null) {
-      val isConnected = state.isConnected
-      if (isConnected) {
-        disconnect()
-      } else {
-        checkVpnPermission()
+      when (state.vpnStatus) {
+        VpnStatus.Connecting -> disconnect()
+        VpnStatus.Connected -> disconnect()
+        VpnStatus.Disconnecting -> Unit
+        VpnStatus.Disconnected -> checkVpnPermission()
       }
     } else {
       onSelectServerClick()
@@ -156,7 +157,7 @@ class DashboardScreenViewModel
   fun onPermissionsResult(isSuccess: Boolean) {
     if (!isSuccess) return
     val city = state.selectedCity ?: return
-    stateHolder.updateState { copy(status = Status.Loading) }
+    stateHolder.updateState { copy(vpnStatus = VpnStatus.Connecting) }
     viewModelScope.launch {
       vpnConnector.connect(city)
         .foldSuspend(
@@ -169,29 +170,26 @@ class DashboardScreenViewModel
   private suspend fun setConnectedState() {
     Timber.tag(Tag).d("Connected!")
     refreshIp()
-    stateHolder.updateState {
-      copy(status = Status.Data, isConnected = true)
-    }
+    stateHolder.updateState { copy(vpnStatus = VpnStatus.Connected) }
   }
 
   private fun showConnectionFail() {
     Timber.tag(Tag).d("Connection failed!")
     stateHolder.updateState {
       copy(
-        status = Status.Data,
-        isConnected = false,
+        vpnStatus = VpnStatus.Disconnected,
         isErrorAlertVisible = true,
       )
     }
   }
 
   private fun disconnect() {
-    stateHolder.updateState { copy(status = Status.Loading) }
+    stateHolder.updateState { copy(vpnStatus = VpnStatus.Disconnecting) }
     Timber.tag(Tag).d("Disconnect")
     viewModelScope.launch {
       vpnConnector.disconnect()
       refreshIp()
-      stateHolder.updateState { copy(isConnected = false, status = Status.Data) }
+      stateHolder.updateState { copy(vpnStatus = VpnStatus.Disconnected) }
     }
   }
 

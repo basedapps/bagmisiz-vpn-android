@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,10 +26,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -58,6 +59,8 @@ import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenEffect as Effect
 import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenState as State
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.MapboxConfiguredMap
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButton
+import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButtonState
+import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 import co.uk.basedapps.vpn.ui.theme.BasedVPNTheme
 import co.uk.basedapps.vpn.ui.widget.BasedAlertDialog
 import co.uk.basedapps.vpn.ui.widget.ErrorScreen
@@ -199,6 +202,9 @@ private fun Content(
         onSelectServerClick = onSelectServerClick,
       )
     }
+    if (state.status is Status.Loading) {
+      LoadingOverlay()
+    }
     if (state.isErrorAlertVisible) {
       BasedAlertDialog(
         title = stringResource(R.string.dashboard_error_connection_title),
@@ -217,8 +223,8 @@ private fun Map(
   modifier: Modifier = Modifier,
 ) {
   val context = LocalContext.current
-  val countryLabel = remember(state.selectedCity, state.isConnected) {
-    if (state.isConnected) {
+  val countryLabel = remember(state.selectedCity, state.vpnStatus) {
+    if (state.vpnStatus == VpnStatus.Connected) {
       state.selectedCity?.countryName ?: ""
     } else {
       context.getString(R.string.dashboard_current_location)
@@ -284,9 +290,9 @@ private fun TopBar(
       horizontalAlignment = Alignment.CenterHorizontally,
       modifier = Modifier.fillMaxWidth(),
     ) {
-      val protectedLabel = remember(state.isConnected) {
+      val protectedLabel = remember(state.vpnStatus) {
         context.getString(
-          when (state.isConnected) {
+          when (state.vpnStatus == VpnStatus.Connected) {
             true -> R.string.dashboard_protected
             false -> R.string.dashboard_not_protected
           },
@@ -302,7 +308,7 @@ private fun TopBar(
       ) {
         Image(
           painter = painterResource(
-            when (state.isConnected) {
+            when (state.vpnStatus == VpnStatus.Connected) {
               true -> R.drawable.ic_connected
               false -> R.drawable.ic_disconnected
             },
@@ -313,7 +319,7 @@ private fun TopBar(
         Spacer(modifier = Modifier.size(8.dp))
         Text(
           text = protectedLabel,
-          color = when (state.isConnected) {
+          color = when (state.vpnStatus == VpnStatus.Connected) {
             true -> Color.White
             false -> Color(0xFF54687A)
           },
@@ -341,29 +347,33 @@ fun BottomBar(
       .padding(top = 24.dp, bottom = 24.dp)
       .navigationBarsPadding(),
   ) {
-    val buttonState = when {
-      state.status is Status.Loading -> VpnButtonState.Connecting
-      state.isConnected -> VpnButtonState.Connected
-      else -> VpnButtonState.Disconnected
-    }
+    val buttonState = state.vpnStatus.toButtonState()
     VpnButton(buttonState, onConnectClick)
-    Spacer(modifier = Modifier.size(20.dp))
-    val stateLabel = stringResource(
-      when {
-        state.status is Status.Loading -> R.string.dashboard_state_loading
-        state.isConnected -> R.string.dashboard_state_connected
-        else -> R.string.dashboard_state_disconnected
-      },
-    )
+    Spacer(modifier = Modifier.size(12.dp))
+    val stateLabelRes = when (state.vpnStatus) {
+      VpnStatus.Connected -> R.string.dashboard_state_connected
+      VpnStatus.Connecting -> R.string.dashboard_state_connecting
+      VpnStatus.Disconnected -> R.string.dashboard_state_disconnected
+      VpnStatus.Disconnecting -> R.string.dashboard_state_disconnecting
+    }
     Text(
-      text = stateLabel,
+      text = stringResource(stateLabelRes),
       color = Color.White,
       fontWeight = FontWeight.W600,
       fontSize = 16.sp,
     )
+    val infoText = when (state.vpnStatus) {
+      VpnStatus.Connecting -> stringResource(R.string.dashboard_state_connecting_info)
+      else -> ""
+    }
+    Text(
+      text = infoText,
+      color = BasedAppColor.TextSecondary,
+      fontSize = 12.sp,
+    )
     val selectedCity = state.selectedCity
     if (selectedCity != null) {
-      Spacer(modifier = Modifier.size(26.dp))
+      Spacer(modifier = Modifier.size(12.dp))
       SelectedCountryRow(
         selectedCity = selectedCity,
         onClick = onSelectServerClick,
@@ -419,12 +429,33 @@ fun SelectedCountryRow(
   }
 }
 
-@Stable
-enum class VpnButtonState {
-  Connected,
-  Disconnected,
-  Connecting,
+@Composable
+private fun LoadingOverlay() {
+  Box(
+    contentAlignment = Alignment.Center,
+    modifier = Modifier
+      .clickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = null,
+        onClick = {},
+      )
+      .navigationBarsPadding()
+      .background(Color.Black.copy(alpha = 0.3f))
+      .fillMaxSize(),
+  ) {
+    CircularProgressIndicator(
+      color = Color.White,
+    )
+  }
 }
+
+fun VpnStatus.toButtonState(): VpnButtonState =
+  when (this) {
+    VpnStatus.Connected -> VpnButtonState.Connected
+    VpnStatus.Connecting -> VpnButtonState.Connecting
+    VpnStatus.Disconnected -> VpnButtonState.Disconnected
+    VpnStatus.Disconnecting -> VpnButtonState.Disconnecting
+  }
 
 @Preview
 @Composable

@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import co.uk.basedapps.vpn.R
-import co.uk.basedapps.vpn.ui.screens.dashboard.VpnButtonState
 
 @Composable
 fun VpnButton(
@@ -29,8 +30,13 @@ fun VpnButton(
 ) {
   val offset by animateDpAsState(
     targetValue = when (state) {
-      VpnButtonState.Disconnected -> 0.dp
-      else -> 56.dp
+      VpnButtonState.Disconnected,
+      VpnButtonState.Connecting,
+      -> 0.dp
+
+      VpnButtonState.Connected,
+      VpnButtonState.Disconnecting,
+      -> 56.dp
     },
     label = "Button offset",
   )
@@ -67,12 +73,26 @@ fun VpnButton(
         .background(buttonColor)
         .size(56.dp),
     ) {
-      Icon(
-        painter = painterResource(R.drawable.ic_power),
-        contentDescription = null,
-        tint = iconColor,
-        modifier = Modifier.size(28.dp),
-      )
+      if (state == VpnButtonState.Connected || state == VpnButtonState.Disconnected) {
+        Icon(
+          painter = painterResource(R.drawable.ic_power),
+          contentDescription = null,
+          tint = iconColor,
+          modifier = Modifier.size(28.dp),
+        )
+      } else {
+        CircularProgressIndicator(
+          color = iconColor,
+        )
+      }
     }
   }
+}
+
+@Stable
+enum class VpnButtonState {
+  Disconnected,
+  Connecting,
+  Connected,
+  Disconnecting,
 }
