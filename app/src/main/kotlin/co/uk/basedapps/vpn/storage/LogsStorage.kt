@@ -25,7 +25,7 @@ class LogsStorage
   }
 
   fun getLogs(): String = logList
-    .joinToString(separator = "\n") {
+    .joinToString(separator = "\n\n") {
       "${dateFormatter.format(Date(it.time))} : ${it.message}"
     }
 }

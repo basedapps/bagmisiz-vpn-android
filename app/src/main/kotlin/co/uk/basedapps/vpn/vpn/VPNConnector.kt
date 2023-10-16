@@ -73,7 +73,11 @@ class VPNConnector @Inject constructor(
         Either.Left(
           Error.GetCredentials(
             when (exception) {
-              is HttpException -> exception.response()?.toString()
+              is HttpException -> {
+                exception.response()?.run {
+                  "$this ${errorBody()?.string()}"
+                } ?: "Unknown network error"
+              }
               else -> exception.message
             } ?: "",
           ),
