@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.ArrayList;
 
 import dev.dev7.lib.v2ray.core.V2rayCoreManager;
@@ -23,12 +25,17 @@ public class V2rayController {
         Utilities.copyAssets(context);
         AppConfigs.APPLICATION_ICON = app_icon;
         AppConfigs.APPLICATION_NAME = app_name;
-        context.registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                AppConfigs.V2RAY_STATE = (AppConfigs.V2RAY_STATES) arg1.getExtras().getSerializable("STATE");
-            }
-        }, new IntentFilter("V2RAY_CONNECTION_INFO"));
+        ContextCompat.registerReceiver(
+                context,
+                new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context arg0, Intent arg1) {
+                        AppConfigs.V2RAY_STATE = (AppConfigs.V2RAY_STATES) arg1.getExtras().getSerializable("STATE");
+                    }
+                },
+                new IntentFilter("V2RAY_CONNECTION_INFO"),
+                ContextCompat.RECEIVER_NOT_EXPORTED
+        );
     }
 
     public static void changeConnectionMode(final AppConfigs.V2RAY_CONNECTION_MODES connection_mode) {
@@ -84,15 +91,20 @@ public class V2rayController {
         }
         check_delay.putExtra("COMMAND", AppConfigs.V2RAY_SERVICE_COMMANDS.MEASURE_DELAY);
         context.startService(check_delay);
-        context.registerReceiver(new BroadcastReceiver() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                String delay = arg1.getExtras().getString("DELAY");
-                tvDelay.setText("connected server delay : " + delay);
-                context.unregisterReceiver(this);
-            }
-        }, new IntentFilter("CONNECTED_V2RAY_SERVER_DELAY"));
+        ContextCompat.registerReceiver(
+                context,
+                new BroadcastReceiver() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onReceive(Context arg0, Intent arg1) {
+                        String delay = arg1.getExtras().getString("DELAY");
+                        tvDelay.setText("connected server delay : " + delay);
+                        context.unregisterReceiver(this);
+                    }
+                },
+                new IntentFilter("CONNECTED_V2RAY_SERVER_DELAY"),
+                ContextCompat.RECEIVER_NOT_EXPORTED
+        );
     }
 
     public static String getV2rayServerDelay(final String config) {
@@ -112,7 +124,7 @@ public class V2rayController {
         return AppConfigs.V2RAY_STATE;
     }
 
-    public static String getCoreVersion(){
+    public static String getCoreVersion() {
         return Libv2ray.checkVersionX();
     }
 
