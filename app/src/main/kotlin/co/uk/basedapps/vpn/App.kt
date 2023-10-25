@@ -2,8 +2,8 @@ package co.uk.basedapps.vpn
 
 import android.app.Application
 import co.uk.basedapps.domain_wireguard.core.init.WireguardInitializer
+import com.v2ray.ang.V2RayInitializer
 import dagger.hilt.android.HiltAndroidApp
-import dev.dev7.lib.v2ray.V2rayController
 import javax.inject.Inject
 import timber.log.Timber
 
@@ -26,7 +26,7 @@ class App : Application() {
   }
 
   private fun setupVPN() {
-    V2rayController.init(applicationContext, R.drawable.ic_settings, getString(R.string.app_name))
+    V2RayInitializer.init(this)
     wireguardInitializer.init()
   }
 }

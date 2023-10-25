@@ -42,7 +42,7 @@ class VPNConnector @Inject constructor(
   }
 
   suspend fun disconnect() {
-    return withContext(Dispatchers.IO) {
+    return withContext(Dispatchers.Main) {
       when {
         wireguardRepository.isConnected() -> disconnectWireguard()
         v2RayRepository.isConnected() -> disconnectV2Ray()
@@ -78,6 +78,7 @@ class VPNConnector @Inject constructor(
                   "$this ${errorBody()?.string()}"
                 } ?: "Unknown network error"
               }
+
               else -> exception.message
             } ?: "",
           ),
@@ -159,7 +160,7 @@ class VPNConnector @Inject constructor(
     return Either.Right(Unit)
   }
 
-  private fun disconnectV2Ray() {
+  private suspend fun disconnectV2Ray() {
     v2RayRepository.stopV2ray()
   }
 

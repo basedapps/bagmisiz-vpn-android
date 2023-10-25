@@ -15,8 +15,8 @@ android {
         targetSdk libs.versions.compileSdk.get().toInteger()
         compileSdk libs.versions.compileSdk.get().toInteger()
 
-        versionCode 9
-        versionName "1.0.9"
+        versionCode 10
+        versionName "1.0.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
