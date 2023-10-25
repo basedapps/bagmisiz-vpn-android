@@ -21,6 +21,13 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach {
+            def versionName = variant.versionName
+            outputFileName = "${applicationId}_${versionName}.apk"
+        }
+    }
+
     buildTypes {
         debug {
             // buildConfigField "String", "API_URL", "\"https://vpn-api-staging.basedapps.co.uk\""

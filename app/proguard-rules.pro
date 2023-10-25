@@ -10,6 +10,7 @@
 # Application
 -keep class co.uk.basedapps.vpn.network.model.** { *; }
 -keep class co.uk.basedapps.vpn.common.flags.** { *; }
+-keep class com.v2ray.ang.dto.** { *; }
 
 -dontwarn com.google.android.gms.common.GoogleApiAvailability
 -dontwarn com.google.android.gms.location.ActivityRecognition
