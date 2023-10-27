@@ -69,21 +69,7 @@ class VPNConnector @Inject constructor(
       protocol = protocol,
     )
     return credentialsRes.foldSuspend(
-      fnL = { exception ->
-        Either.Left(
-          Error.GetCredentials(
-            when (exception) {
-              is HttpException -> {
-                exception.response()?.run {
-                  "$this ${errorBody()?.string()}"
-                } ?: "Unknown network error"
-              }
-
-              else -> exception.message
-            } ?: "",
-          ),
-        )
-      },
+      fnL = { Either.Left(parseError(it)) },
       fnR = { credentials ->
         getVPNProfile(
           serverId = city.serverId,
@@ -91,6 +77,23 @@ class VPNConnector @Inject constructor(
         )
       },
     )
+  }
+
+  private fun parseError(exception: Exception): Error {
+    return when (exception) {
+      is HttpException -> {
+        val response = exception.response()
+        when (response?.code()) {
+          403 -> Error.Banned
+          425 -> Error.NotEnrolled
+          else -> Error.GetCredentials(
+            response?.run { "$this ${errorBody()?.string()}" },
+          )
+        }
+      }
+
+      else -> Error.GetCredentials(exception.message)
+    }
   }
 
   private suspend fun getVPNProfile(
@@ -175,8 +178,16 @@ class VPNConnector @Inject constructor(
   }
 
   sealed interface Error : BaseError {
-    data class GetCredentials(val error: String) : Error {
-      override val message: String = "Get Credentials error: $error"
+    data class GetCredentials(val error: String?) : Error {
+      override val message: String = "Get Credentials error: ${error ?: "Unknown"}"
+    }
+
+    data object NotEnrolled : Error {
+      override val message: String = "User not enrolled"
+    }
+
+    data object Banned : Error {
+      override val message: String = "User has been banned"
     }
 
     data object ParseProfile : Error {

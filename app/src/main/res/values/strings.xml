@@ -6,6 +6,7 @@
     <string name="common_cancel">Cancel</string>
 
     <string name="dashboard_your_ip">Your IP address</string>
+    <string name="dashboard_loading">Preparing your account…</string>
     <string name="dashboard_connect_to_vpn">Connect to VPN</string>
     <string name="dashboard_disconnect_from_vpn">Disconnect</string>
     <string name="dashboard_connected_to_vpn">Connected to VPN</string>
@@ -63,4 +64,5 @@
 
     <string name="error_generic_title">Something went wrong</string>
     <string name="error_generic_description">Please check your Internet connection and try again later</string>
+    <string name="error_banned_title">App has been blocked for violating the terms of use of the service</string>
 </resources>

@@ -22,6 +22,9 @@ class BasedRepository
   suspend fun registerDevice(): NetResult<DataObj<TokenModel>> =
     execute(api::registerDevice)
 
+  suspend fun getSession(): NetResult<DataObj<TokenModel>> =
+    execute(api::getSession)
+
   suspend fun getCountries(): NetResult<DataList<Country>> =
     execute(api::getCountries)
 

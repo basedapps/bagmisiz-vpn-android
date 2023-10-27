@@ -14,6 +14,7 @@ constructor() : ViewStateHolder<DashboardScreenState, DashboardScreenEffect>(
 data class DashboardScreenState(
   val status: Status = Status.Data,
   val vpnStatus: VpnStatus = VpnStatus.Disconnected,
+  val isBanned: Boolean = false,
   val selectedCity: SelectedCity? = null,
   val ipAddress: String = "",
   val isErrorAlertVisible: Boolean = false,

@@ -19,6 +19,9 @@ interface Api {
     @Body body: Map<String, String> = mapOf("platform" to "ANDROID"),
   ): DataObj<TokenModel>
 
+  @GET("device")
+  suspend fun getSession(): DataObj<TokenModel>
+
   @GET("countries")
   suspend fun getCountries(): DataList<Country>
 
@@ -32,6 +35,7 @@ interface Api {
    * 500 — внутренняя ошибка сервера
    * 401 — не авторизован (нет токена или он неверный)
    * 410 — сервер, к которому попытались подключиться, умер и не отвечает
+   * 425 – deviceNotEnrolled (кошелек создается)
    */
   @POST("countries/{countryId}/cities/{cityId}/credentials/{protocol}")
   suspend fun getCredentials(

@@ -28,8 +28,8 @@ import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 @Composable
 fun ErrorScreen(
   paddingValues: PaddingValues = PaddingValues(),
-  title: String = stringResource(R.string.error_generic_title),
-  description: String = stringResource(R.string.error_generic_description),
+  title: String? = stringResource(R.string.error_generic_title),
+  description: String? = stringResource(R.string.error_generic_description),
   isLoading: Boolean = false,
   onButtonClick: (() -> Unit)? = null,
 ) {
@@ -51,26 +51,32 @@ fun ErrorScreen(
       tint = BasedAppColor.Accent,
       contentDescription = null,
     )
-    Spacer(modifier = Modifier.size(20.dp))
-    Text(
-      text = title,
-      fontSize = 24.sp,
-      textAlign = TextAlign.Center,
-      color = Color.White,
-      modifier = Modifier.fillMaxWidth(),
-    )
-    Spacer(modifier = Modifier.size(20.dp))
-    Text(
-      text = description,
-      fontSize = 14.sp,
-      textAlign = TextAlign.Center,
-      color = Color.White,
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 48.dp),
-    )
-    Spacer(modifier = Modifier.size(32.dp))
+    if (title != null) {
+      Spacer(modifier = Modifier.size(20.dp))
+      Text(
+        text = title,
+        fontSize = 24.sp,
+        textAlign = TextAlign.Center,
+        color = Color.White,
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 32.dp),
+      )
+    }
+    if (description != null) {
+      Spacer(modifier = Modifier.size(20.dp))
+      Text(
+        text = description,
+        fontSize = 14.sp,
+        textAlign = TextAlign.Center,
+        color = Color.White,
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 48.dp),
+      )
+    }
     if (onButtonClick != null) {
+      Spacer(modifier = Modifier.size(32.dp))
       BasedButton(
         text = "Try again",
         style = ButtonStyle.Primary,

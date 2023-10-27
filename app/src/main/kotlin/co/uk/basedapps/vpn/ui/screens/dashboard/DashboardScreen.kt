@@ -57,6 +57,7 @@ import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.storage.SelectedCity
 import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenEffect as Effect
 import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenState as State
+import androidx.compose.ui.text.style.TextAlign
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.MapboxConfiguredMap
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButton
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButtonState
@@ -146,8 +147,14 @@ fun DashboardScreenStateless(
   onAlertConfirmClick: () -> Unit,
   onAlertDismissRequest: () -> Unit,
 ) {
-  when (state.status) {
-    is Status.Error -> ErrorScreen(
+  when {
+    state.isBanned -> ErrorScreen(
+      title = null,
+      description = stringResource(R.string.error_banned_title),
+      onButtonClick = null,
+    )
+
+    state.status is Status.Error -> ErrorScreen(
       isLoading = state.status.isLoading,
       onButtonClick = onTryAgainClick,
     )
@@ -440,12 +447,26 @@ private fun LoadingOverlay() {
         onClick = {},
       )
       .navigationBarsPadding()
-      .background(Color.Black.copy(alpha = 0.3f))
+      .background(Color.Black.copy(alpha = 0.5f))
       .fillMaxSize(),
   ) {
-    CircularProgressIndicator(
-      color = Color.White,
-    )
+    Column(
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      CircularProgressIndicator(
+        color = Color.White,
+      )
+      Spacer(modifier = Modifier.size(24.dp))
+      Text(
+        text = stringResource(R.string.dashboard_loading),
+        fontSize = 16.sp,
+        color = Color.White,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 48.dp),
+      )
+    }
   }
 }
 

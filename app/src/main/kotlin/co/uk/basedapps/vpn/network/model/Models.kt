@@ -21,7 +21,9 @@ data class TokenModel(
   @SerializedName("token")
   val token: String,
   @SerializedName("is_banned")
-  val isBanned: String,
+  val isBanned: Boolean,
+  @SerializedName("is_enrolled")
+  val isEnrolled: Boolean,
 )
 
 data class Country(

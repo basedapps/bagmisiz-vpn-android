@@ -13,6 +13,7 @@ import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenEffect as Effect
 import co.uk.basedapps.vpn.vpn.VPNConnector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -36,18 +37,37 @@ class DashboardScreenViewModel
   }
 
   private fun initialize() {
+    stateHolder.updateState { copy(status = Status.Loading) }
+    enrollUser()
+  }
+
+  private fun enrollUser() {
     viewModelScope.launch {
-      stateHolder.updateState { copy(status = Status.Loading) }
       val hasToken = if (storage.getToken().isEmpty()) {
         getToken().isNotNullOrEmpty()
       } else {
         true
       }
-      if (hasToken) {
-        refreshIp()
-        stateHolder.updateState { copy(status = Status.Data) }
+      val enrollmentStatus = if (hasToken) {
+        refreshIp(isSingle = true)
+        waitUserEnrollment()
       } else {
-        stateHolder.updateState { copy(status = Status.Error(false)) }
+        EnrollmentStatus.NotEnrolled
+      }
+      when (enrollmentStatus) {
+        EnrollmentStatus.Enrolled ->
+          stateHolder.updateState { copy(status = Status.Data) }
+
+        EnrollmentStatus.NotEnrolled ->
+          stateHolder.updateState { copy(status = Status.Error(false)) }
+
+        EnrollmentStatus.Banned ->
+          stateHolder.updateState {
+            copy(
+              status = Status.Error(false),
+              isBanned = true,
+            )
+          }
       }
     }
   }
@@ -62,7 +82,20 @@ class DashboardScreenViewModel
     return token
   }
 
-  private suspend fun refreshIp() {
+  private suspend fun waitUserEnrollment(): EnrollmentStatus {
+    val maxAttempts = 10
+    repeat(maxAttempts) { attempt ->
+      val session = repository.getSession().getOrNull()?.data
+      when {
+        session?.isBanned == true -> return EnrollmentStatus.Banned
+        session?.isEnrolled == true -> return EnrollmentStatus.Enrolled
+      }
+      if (attempt < maxAttempts - 1) delay(3.seconds)
+    }
+    return EnrollmentStatus.NotEnrolled
+  }
+
+  private suspend fun refreshIp(isSingle: Boolean = false) {
     val currentIp = state.ipAddress
     Timber.tag(Tag).d("-> Current IP: $currentIp")
     var refreshAttempt = 0
@@ -75,6 +108,7 @@ class DashboardScreenViewModel
       refreshAttempt++
       ipModel = repository.getIp().getOrNull()?.data ?: return
       Timber.tag(Tag).d("New IP: ${ipModel.ip}")
+      if (isSingle) break
       delay(1000)
     } while (ipModel.ip == currentIp && refreshAttempt <= 3)
     stateHolder.updateState { copy(ipAddress = ipModel.ip) }
@@ -143,15 +177,7 @@ class DashboardScreenViewModel
 
   fun onTryAgainClick() {
     stateHolder.updateState { copy(status = Status.Error(true)) }
-    viewModelScope.launch {
-      val hasToken = getToken().isNotNullOrEmpty()
-      if (hasToken) {
-        refreshIp()
-        stateHolder.updateState { copy(status = Status.Data) }
-      } else {
-        stateHolder.updateState { copy(status = Status.Error(false)) }
-      }
-    }
+    enrollUser()
   }
 
   fun onPermissionsResult(isSuccess: Boolean) {
@@ -162,7 +188,7 @@ class DashboardScreenViewModel
       vpnConnector.connect(city)
         .foldSuspend(
           fnR = { setConnectedState() },
-          fnL = { showConnectionFail() },
+          fnL = ::handleConnectionError,
         )
     }
   }
@@ -173,13 +199,31 @@ class DashboardScreenViewModel
     stateHolder.updateState { copy(vpnStatus = VpnStatus.Connected) }
   }
 
-  private fun showConnectionFail() {
-    Timber.tag(Tag).d("Connection failed!")
-    stateHolder.updateState {
-      copy(
-        vpnStatus = VpnStatus.Disconnected,
-        isErrorAlertVisible = true,
-      )
+  private fun handleConnectionError(error: VPNConnector.Error) {
+    Timber.tag(Tag).d("Connection failed! reason: $error")
+    when (error) {
+      is VPNConnector.Error.NotEnrolled -> {
+        stateHolder.updateState {
+          copy(
+            status = Status.Loading,
+            vpnStatus = VpnStatus.Disconnected,
+          )
+        }
+        enrollUser()
+      }
+
+      is VPNConnector.Error.Banned -> {
+        stateHolder.updateState { copy(isBanned = true) }
+      }
+
+      else -> {
+        stateHolder.updateState {
+          copy(
+            vpnStatus = VpnStatus.Disconnected,
+            isErrorAlertVisible = true,
+          )
+        }
+      }
     }
   }
 
@@ -203,5 +247,9 @@ class DashboardScreenViewModel
 
   companion object {
     const val Tag = "DashboardTag"
+  }
+
+  enum class EnrollmentStatus {
+    Enrolled, NotEnrolled, Banned
   }
 }
