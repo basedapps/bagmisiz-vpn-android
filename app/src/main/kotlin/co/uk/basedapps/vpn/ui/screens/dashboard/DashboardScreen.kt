@@ -34,7 +34,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,14 +48,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import co.uk.basedapps.domain_wireguard.core.init.getVpnPermissionRequest
 import co.uk.basedapps.vpn.R
 import co.uk.basedapps.vpn.common.compose.EffectHandler
 import co.uk.basedapps.vpn.common.flags.CountryFlag
 import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.storage.SelectedCity
-import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenEffect as Effect
-import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenState as State
+import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenEffect as Effect
+import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenState as State
 import androidx.compose.ui.text.style.TextAlign
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.MapboxConfiguredMap
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButton
@@ -65,6 +63,9 @@ import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 import co.uk.basedapps.vpn.ui.theme.BasedVPNTheme
 import co.uk.basedapps.vpn.ui.widget.BasedAlertDialog
 import co.uk.basedapps.vpn.ui.widget.ErrorScreen
+import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenViewModel
+import co.uk.basedapps.vpn.viewModel.dashboard.VpnStatus
+import co.uk.basedapps.vpn.vpn.getVpnPermissionRequest
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapboxExperimental
@@ -155,7 +156,7 @@ fun DashboardScreenStateless(
     )
 
     state.status is Status.Error -> ErrorScreen(
-      isLoading = state.status.isLoading,
+      isLoading = (state.status as Status.Error).isLoading,
       onButtonClick = onTryAgainClick,
     )
 

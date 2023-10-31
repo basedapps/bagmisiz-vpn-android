@@ -25,11 +25,12 @@ import co.uk.basedapps.vpn.R
 import co.uk.basedapps.vpn.common.compose.EffectHandler
 import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.network.model.City
-import co.uk.basedapps.vpn.ui.screens.cities.CitiesScreenEffect as Effect
-import co.uk.basedapps.vpn.ui.screens.cities.CitiesScreenState as State
+import co.uk.basedapps.vpn.viewModel.cities.CitiesScreenEffect as Effect
+import co.uk.basedapps.vpn.viewModel.cities.CitiesScreenState as State
 import co.uk.basedapps.vpn.ui.widget.BaseRow
 import co.uk.basedapps.vpn.ui.widget.ErrorScreen
 import co.uk.basedapps.vpn.ui.widget.TopBar
+import co.uk.basedapps.vpn.viewModel.cities.CitiesScreenViewModel
 
 @Composable
 fun CitiesScreen(
@@ -110,7 +111,7 @@ private fun Content(
       }
 
       is Status.Error -> ErrorScreen(
-        isLoading = state.status.isLoading,
+        isLoading = (state.status as Status.Error).isLoading,
         onButtonClick = onTryAgainClick,
       )
 

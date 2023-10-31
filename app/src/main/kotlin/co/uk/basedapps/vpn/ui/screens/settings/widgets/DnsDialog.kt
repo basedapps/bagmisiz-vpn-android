@@ -24,7 +24,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.uk.basedapps.vpn.R
-import co.uk.basedapps.vpn.ui.screens.settings.SettingsScreenState
+import co.uk.basedapps.vpn.viewModel.settings.SettingsScreenState
 import co.uk.basedapps.vpn.ui.screens.settings.getLabelRes
 import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 import co.uk.basedapps.vpn.vpn.DdsConfigurator

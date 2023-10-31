@@ -30,9 +30,6 @@
     <string name="settings_dns_handshake">Handshake DNS</string>
     <string name="settings_dns_change_title">Türü Seç</string>
 
-    <string name="settings_protocol_wireguard">WireGuard</string>
-    <string name="settings_protocol_v2ray">V2Ray</string>
-    <string name="settings_protocol_any">Herhangi</string>
     <string name="settings_protocol_change_title">Protokol seçin</string>
 
     <string name="settings_logs_description">Panoya kopyala</string>

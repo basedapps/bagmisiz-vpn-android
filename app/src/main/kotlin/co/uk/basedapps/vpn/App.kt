@@ -1,8 +1,7 @@
 package co.uk.basedapps.vpn
 
 import android.app.Application
-import co.uk.basedapps.domain_wireguard.core.init.WireguardInitializer
-import com.v2ray.ang.V2RayInitializer
+import co.uk.basedapps.vpn.vpn.VpnInitializer
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import timber.log.Timber
@@ -11,22 +10,17 @@ import timber.log.Timber
 class App : Application() {
 
   @Inject
-  lateinit var wireguardInitializer: WireguardInitializer
+  lateinit var vpnInitializer: VpnInitializer
 
   override fun onCreate() {
     super.onCreate()
     setupTimber()
-    setupVPN()
+    vpnInitializer.setupVPN(this)
   }
 
   private fun setupTimber() {
     if (BuildConfig.DEBUG) {
       Timber.plant(Timber.DebugTree())
     }
-  }
-
-  private fun setupVPN() {
-    V2RayInitializer.init(this)
-    wireguardInitializer.init()
   }
 }

@@ -1,4 +1,4 @@
-package co.uk.basedapps.vpn.ui.screens.countries
+package co.uk.basedapps.vpn.viewModel.countries
 
 import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.common.state.ViewStateHolder
@@ -12,8 +12,8 @@ constructor() : ViewStateHolder<CountriesScreenState, CountriesScreenEffect>(
 )
 
 data class CountriesScreenState(
-    val status: Status = Status.Data,
-    val countries: List<Country> = emptyList(),
+  val status: Status = Status.Data,
+  val countries: List<Country> = emptyList(),
 )
 
 sealed interface CountriesScreenEffect {

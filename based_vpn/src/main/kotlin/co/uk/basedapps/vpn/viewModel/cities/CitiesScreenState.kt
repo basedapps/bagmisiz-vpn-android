@@ -1,4 +1,4 @@
-package co.uk.basedapps.vpn.ui.screens.cities
+package co.uk.basedapps.vpn.viewModel.cities
 
 import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.common.state.ViewStateHolder
@@ -13,10 +13,10 @@ constructor() : ViewStateHolder<CitiesScreenState, CitiesScreenEffect>(
 )
 
 data class CitiesScreenState(
-    val status: Status = Status.Loading,
-    val countryId: Int? = null,
-    val country: Country? = null,
-    val cities: List<City> = emptyList(),
+  val status: Status = Status.Loading,
+  val countryId: Int? = null,
+  val country: Country? = null,
+  val cities: List<City> = emptyList(),
 )
 
 sealed interface CitiesScreenEffect {

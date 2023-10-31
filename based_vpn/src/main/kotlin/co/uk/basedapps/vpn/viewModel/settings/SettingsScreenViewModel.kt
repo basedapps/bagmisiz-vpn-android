@@ -1,4 +1,4 @@
-package co.uk.basedapps.vpn.ui.screens.settings
+package co.uk.basedapps.vpn.viewModel.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

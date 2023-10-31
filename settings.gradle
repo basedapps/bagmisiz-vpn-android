@@ -31,4 +31,5 @@ include ':app',
         ':domain',
         ':v2ray',
         ':domain_v2ray',
-        ':domain_wireguard'
+        ':domain_wireguard',
+        ':based_vpn'

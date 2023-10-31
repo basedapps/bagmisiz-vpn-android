@@ -2,6 +2,7 @@ package co.uk.basedapps.vpn.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import co.uk.basedapps.vpn.common.provider.AppDetailsProvider
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -12,14 +13,15 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AppModule {
+class StorageModule {
 
   @Provides
   @Singleton
   fun provideSharedPreferences(
     @ApplicationContext context: Context,
+    provider: AppDetailsProvider,
   ): SharedPreferences =
-    context.getSharedPreferences("co.uk.basedapps.vpn", Context.MODE_PRIVATE)
+    context.getSharedPreferences(provider.getPackage(), Context.MODE_PRIVATE)
 
   @Provides
   @Singleton

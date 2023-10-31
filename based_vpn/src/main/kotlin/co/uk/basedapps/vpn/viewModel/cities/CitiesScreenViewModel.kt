@@ -1,4 +1,4 @@
-package co.uk.basedapps.vpn.ui.screens.cities
+package co.uk.basedapps.vpn.viewModel.cities
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

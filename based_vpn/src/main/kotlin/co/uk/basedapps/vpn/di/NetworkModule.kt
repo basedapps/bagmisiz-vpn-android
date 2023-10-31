@@ -1,7 +1,7 @@
 package co.uk.basedapps.vpn.di
 
 import android.content.SharedPreferences
-import co.uk.basedapps.vpn.BuildConfig
+import co.uk.basedapps.vpn.common.provider.AppDetailsProvider
 import co.uk.basedapps.vpn.network.Api
 import co.uk.basedapps.vpn.network.HeadersInterceptor
 import co.uk.basedapps.vpn.network.repository.BasedRepository
@@ -44,9 +44,12 @@ class NetworkModule {
 
   @Provides
   @Singleton
-  fun provideRetrofit(client: OkHttpClient): Retrofit =
+  fun provideRetrofit(
+    client: OkHttpClient,
+    provider: AppDetailsProvider,
+  ): Retrofit =
     Retrofit.Builder()
-      .baseUrl(BuildConfig.API_URL)
+      .baseUrl(provider.getBaseUrl())
       .addConverterFactory(GsonConverterFactory.create())
       .client(client)
       .build()

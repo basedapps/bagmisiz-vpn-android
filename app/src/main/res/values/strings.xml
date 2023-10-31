@@ -41,9 +41,6 @@
     <string name="settings_dns_handshake">Handshake DNS</string>
     <string name="settings_dns_change_title">Choose type</string>
 
-    <string name="settings_protocol_wireguard">WireGuard</string>
-    <string name="settings_protocol_v2ray">V2Ray</string>
-    <string name="settings_protocol_any">Any</string>
     <string name="settings_protocol_change_title">Choose protocol</string>
 
     <string name="settings_logs_description">Copy to clipboard</string>

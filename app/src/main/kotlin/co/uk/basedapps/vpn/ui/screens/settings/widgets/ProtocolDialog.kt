@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.uk.basedapps.vpn.R
 import co.uk.basedapps.vpn.network.model.Protocol
-import co.uk.basedapps.vpn.ui.screens.settings.SettingsScreenState
+import co.uk.basedapps.vpn.viewModel.settings.SettingsScreenState
 import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 
 @Composable

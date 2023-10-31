@@ -1,4 +1,4 @@
-package co.uk.basedapps.vpn.ui.screens.dashboard
+package co.uk.basedapps.vpn.viewModel.dashboard
 
 import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.common.state.ViewStateHolder

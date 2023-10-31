@@ -1,6 +1,6 @@
-package co.uk.basedapps.vpn.ui.screens.settings
+package co.uk.basedapps.vpn.viewModel.settings
 
-import co.uk.basedapps.vpn.BuildConfig
+import co.uk.basedapps.vpn.common.provider.AppDetailsProvider
 import co.uk.basedapps.vpn.common.state.ViewStateHolder
 import co.uk.basedapps.vpn.network.model.Protocol
 import co.uk.basedapps.vpn.vpn.DdsConfigurator
@@ -8,8 +8,12 @@ import javax.inject.Inject
 
 class SettingsScreenStateHolder
 @Inject
-constructor() : ViewStateHolder<SettingsScreenState, SettingsScreenEffect>(
-  SettingsScreenState(),
+constructor(
+  provider: AppDetailsProvider,
+) : ViewStateHolder<SettingsScreenState, SettingsScreenEffect>(
+  SettingsScreenState(
+    appVersion = provider.getAppVersion(),
+  ),
 )
 
 data class SettingsScreenState(
@@ -29,7 +33,7 @@ data class SettingsScreenState(
   ),
   val isProtocolSelectorVisible: Boolean = false,
 
-  val appVersion: String = BuildConfig.VERSION_NAME,
+  val appVersion: String = "",
 )
 
 sealed interface SettingsScreenEffect {

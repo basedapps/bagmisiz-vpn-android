@@ -1,4 +1,4 @@
-package co.uk.basedapps.vpn.ui.screens.dashboard
+package co.uk.basedapps.vpn.viewModel.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,7 @@ import co.uk.basedapps.vpn.network.repository.BasedRepository
 import co.uk.basedapps.vpn.network.model.IpModel
 import co.uk.basedapps.vpn.storage.BasedStorage
 import co.uk.basedapps.vpn.storage.SelectedCity
-import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenEffect as Effect
+import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenEffect as Effect
 import co.uk.basedapps.domain.functional.requireLeft
 import co.uk.basedapps.vpn.vpn.VPNConnector
 import dagger.hilt.android.lifecycle.HiltViewModel

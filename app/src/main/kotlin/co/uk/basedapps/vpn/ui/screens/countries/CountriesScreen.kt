@@ -24,11 +24,12 @@ import co.uk.basedapps.vpn.R
 import co.uk.basedapps.vpn.common.compose.EffectHandler
 import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.network.model.Country
-import co.uk.basedapps.vpn.ui.screens.countries.CountriesScreenEffect as Effect
-import co.uk.basedapps.vpn.ui.screens.countries.CountriesScreenState as State
+import co.uk.basedapps.vpn.viewModel.countries.CountriesScreenEffect as Effect
+import co.uk.basedapps.vpn.viewModel.countries.CountriesScreenState as State
 import co.uk.basedapps.vpn.ui.widget.BaseRow
 import co.uk.basedapps.vpn.ui.widget.ErrorScreen
 import co.uk.basedapps.vpn.ui.widget.TopBar
+import co.uk.basedapps.vpn.viewModel.countries.CountriesScreenViewModel
 
 @Composable
 fun CountriesScreen(
@@ -105,7 +106,7 @@ fun Content(
       }
 
       is Status.Error -> ErrorScreen(
-        isLoading = state.status.isLoading,
+        isLoading = (state.status as Status.Error).isLoading,
         onButtonClick = onTryAgainClick,
       )
 

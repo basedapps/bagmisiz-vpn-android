@@ -32,12 +32,14 @@ import co.uk.basedapps.vpn.R
 import co.uk.basedapps.vpn.common.compose.EffectHandler
 import co.uk.basedapps.vpn.common.ext.openWeb
 import co.uk.basedapps.vpn.network.model.Protocol
-import co.uk.basedapps.vpn.ui.screens.settings.SettingsScreenState as State
+import co.uk.basedapps.vpn.viewModel.settings.SettingsScreenState as State
 import co.uk.basedapps.vpn.ui.screens.settings.widgets.DnsDialog
 import co.uk.basedapps.vpn.ui.screens.settings.widgets.ProtocolDialog
 import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 import co.uk.basedapps.vpn.ui.widget.BaseRow
 import co.uk.basedapps.vpn.ui.widget.TopBar
+import co.uk.basedapps.vpn.viewModel.settings.SettingsScreenEffect
+import co.uk.basedapps.vpn.viewModel.settings.SettingsScreenViewModel
 import co.uk.basedapps.vpn.vpn.DdsConfigurator
 import kotlinx.coroutines.launch
 
