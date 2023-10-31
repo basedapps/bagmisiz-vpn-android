@@ -10,12 +10,14 @@ import co.uk.basedapps.vpn.network.model.IpModel
 import co.uk.basedapps.vpn.storage.BasedStorage
 import co.uk.basedapps.vpn.storage.SelectedCity
 import co.uk.basedapps.vpn.ui.screens.dashboard.DashboardScreenEffect as Effect
+import co.uk.basedapps.domain.functional.requireLeft
 import co.uk.basedapps.vpn.vpn.VPNConnector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import timber.log.Timber
 
 @HiltViewModel
@@ -41,8 +43,11 @@ class DashboardScreenViewModel
     enrollUser()
   }
 
-  private fun enrollUser() {
+  private fun enrollUser(shouldRefreshToken: Boolean = false) {
     viewModelScope.launch {
+      if (shouldRefreshToken) {
+        storage.clearToken()
+      }
       val hasToken = if (storage.getToken().isEmpty()) {
         getToken().isNotNullOrEmpty()
       } else {
@@ -68,6 +73,11 @@ class DashboardScreenViewModel
               isBanned = true,
             )
           }
+
+        EnrollmentStatus.TokenExpired -> {
+          storage.clearToken()
+          enrollUser()
+        }
       }
     }
   }
@@ -85,7 +95,12 @@ class DashboardScreenViewModel
   private suspend fun waitUserEnrollment(): EnrollmentStatus {
     val maxAttempts = 10
     repeat(maxAttempts) { attempt ->
-      val session = repository.getSession().getOrNull()?.data
+      val sessionRes = repository.getSession()
+      if (sessionRes.isLeft) {
+        val code = (sessionRes.requireLeft() as? HttpException)?.response()?.code()
+        if (code == 401) return EnrollmentStatus.TokenExpired
+      }
+      val session = sessionRes.getOrNull()?.data
       when {
         session?.isBanned == true -> return EnrollmentStatus.Banned
         session?.isEnrolled == true -> return EnrollmentStatus.Enrolled
@@ -202,14 +217,18 @@ class DashboardScreenViewModel
   private fun handleConnectionError(error: VPNConnector.Error) {
     Timber.tag(Tag).d("Connection failed! reason: $error")
     when (error) {
-      is VPNConnector.Error.NotEnrolled -> {
+      is VPNConnector.Error.NotEnrolled,
+      is VPNConnector.Error.TokenExpired,
+      -> {
         stateHolder.updateState {
           copy(
             status = Status.Loading,
             vpnStatus = VpnStatus.Disconnected,
           )
         }
-        enrollUser()
+        enrollUser(
+          shouldRefreshToken = error is VPNConnector.Error.TokenExpired,
+        )
       }
 
       is VPNConnector.Error.Banned -> {
@@ -250,6 +269,6 @@ class DashboardScreenViewModel
   }
 
   enum class EnrollmentStatus {
-    Enrolled, NotEnrolled, Banned
+    Enrolled, NotEnrolled, Banned, TokenExpired
   }
 }

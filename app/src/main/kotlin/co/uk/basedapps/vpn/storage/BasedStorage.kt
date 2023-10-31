@@ -34,6 +34,10 @@ class BasedStorage
 
   fun getToken(): String = tokenPref
 
+  fun clearToken() {
+    tokenPref = ""
+  }
+
   fun storeSelectedCity(country: Country, city: City) {
     val selectedCity = SelectedCity(
       id = city.id,

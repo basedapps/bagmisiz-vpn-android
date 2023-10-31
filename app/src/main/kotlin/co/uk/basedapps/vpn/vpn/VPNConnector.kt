@@ -84,6 +84,7 @@ class VPNConnector @Inject constructor(
       is HttpException -> {
         val response = exception.response()
         when (response?.code()) {
+          401 -> Error.TokenExpired
           403 -> Error.Banned
           425 -> Error.NotEnrolled
           else -> Error.GetCredentials(
@@ -188,6 +189,10 @@ class VPNConnector @Inject constructor(
 
     data object Banned : Error {
       override val message: String = "User has been banned"
+    }
+
+    data object TokenExpired : Error {
+      override val message: String = "Token has been expired"
     }
 
     data object ParseProfile : Error {
