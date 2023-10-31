@@ -74,10 +74,8 @@ class DashboardScreenViewModel
             )
           }
 
-        EnrollmentStatus.TokenExpired -> {
-          storage.clearToken()
-          enrollUser()
-        }
+        EnrollmentStatus.TokenExpired ->
+          enrollUser(shouldRefreshToken = true)
       }
     }
   }
