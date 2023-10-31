@@ -11,7 +11,7 @@ import co.uk.basedapps.domain_wireguard.core.init.DefaultTunnelName
 import co.uk.basedapps.domain_wireguard.core.model.WireguardVpnProfile
 import co.uk.basedapps.domain_wireguard.core.repo.WireguardRepository
 import co.uk.basedapps.vpn.common.BaseError
-import co.uk.basedapps.vpn.network.BasedRepository
+import co.uk.basedapps.vpn.network.repository.BasedRepository
 import co.uk.basedapps.vpn.network.model.Credentials
 import co.uk.basedapps.vpn.network.model.Protocol
 import co.uk.basedapps.vpn.storage.BasedStorage

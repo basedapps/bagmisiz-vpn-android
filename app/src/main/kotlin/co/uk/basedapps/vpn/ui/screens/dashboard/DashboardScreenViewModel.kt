@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.uk.basedapps.domain.extension.isNotNullOrEmpty
 import co.uk.basedapps.domain.functional.getOrNull
 import co.uk.basedapps.vpn.common.state.Status
-import co.uk.basedapps.vpn.network.BasedRepository
+import co.uk.basedapps.vpn.network.repository.BasedRepository
 import co.uk.basedapps.vpn.network.model.IpModel
 import co.uk.basedapps.vpn.storage.BasedStorage
 import co.uk.basedapps.vpn.storage.SelectedCity

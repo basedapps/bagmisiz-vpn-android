@@ -4,6 +4,8 @@ import android.content.SharedPreferences
 import co.uk.basedapps.vpn.BuildConfig
 import co.uk.basedapps.vpn.network.Api
 import co.uk.basedapps.vpn.network.HeadersInterceptor
+import co.uk.basedapps.vpn.network.repository.BasedRepository
+import co.uk.basedapps.vpn.network.repository.BasedRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,4 +55,11 @@ class NetworkModule {
   @Singleton
   fun provideApi(retrofit: Retrofit): Api =
     retrofit.create(Api::class.java)
+
+  @Provides
+  @Singleton
+  fun provideRepository(
+    api: Api,
+    client: OkHttpClient,
+  ): BasedRepository = BasedRepositoryImpl(api, client)
 }

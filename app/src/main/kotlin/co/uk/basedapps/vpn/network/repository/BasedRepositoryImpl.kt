@@ -1,5 +1,8 @@
-package co.uk.basedapps.vpn.network
+package co.uk.basedapps.vpn.network.repository
 
+import co.uk.basedapps.vpn.network.Api
+import co.uk.basedapps.vpn.network.NetResult
+import co.uk.basedapps.vpn.network.execute
 import co.uk.basedapps.vpn.network.model.City
 import co.uk.basedapps.vpn.network.model.Country
 import co.uk.basedapps.vpn.network.model.Credentials
@@ -8,30 +11,28 @@ import co.uk.basedapps.vpn.network.model.DataObj
 import co.uk.basedapps.vpn.network.model.IpModel
 import co.uk.basedapps.vpn.network.model.Protocol
 import co.uk.basedapps.vpn.network.model.TokenModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 
-class BasedRepository
-@Inject constructor(
+class BasedRepositoryImpl(
   private val api: Api,
   private val client: OkHttpClient,
-) {
+) : BasedRepository {
 
-  suspend fun registerDevice(): NetResult<DataObj<TokenModel>> =
+  override suspend fun registerDevice(): NetResult<DataObj<TokenModel>> =
     execute(api::registerDevice)
 
-  suspend fun getSession(): NetResult<DataObj<TokenModel>> =
+  override suspend fun getSession(): NetResult<DataObj<TokenModel>> =
     execute(api::getSession)
 
-  suspend fun getCountries(): NetResult<DataList<Country>> =
+  override suspend fun getCountries(): NetResult<DataList<Country>> =
     execute(api::getCountries)
 
-  suspend fun getCities(countryId: Int): NetResult<DataList<City>> =
+  override suspend fun getCities(countryId: Int): NetResult<DataList<City>> =
     execute { api.getCities(countryId) }
 
-  suspend fun getCredentials(
+  override suspend fun getCredentials(
     countryId: Int,
     cityId: Int,
     protocol: Protocol?,
@@ -43,10 +44,10 @@ class BasedRepository
     )
   }
 
-  suspend fun getIp(): NetResult<DataObj<IpModel>> =
+  override suspend fun getIp(): NetResult<DataObj<IpModel>> =
     execute { api.getIp() }
 
-  suspend fun resetConnection() {
+  override suspend fun resetConnection() {
     withContext(Dispatchers.IO) {
       client.connectionPool.evictAll()
     }
