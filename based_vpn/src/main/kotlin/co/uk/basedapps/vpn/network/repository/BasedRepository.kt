@@ -14,8 +14,8 @@ interface BasedRepository {
 
   suspend fun registerDevice(): NetResult<DataObj<TokenModel>>
   suspend fun getSession(): NetResult<DataObj<TokenModel>>
-  suspend fun getCountries(): NetResult<DataList<Country>>
-  suspend fun getCities(countryId: Int): NetResult<DataList<City>>
+  suspend fun getCountries(protocol: Protocol?): NetResult<DataList<Country>>
+  suspend fun getCities(countryId: Int, protocol: Protocol?): NetResult<DataList<City>>
   suspend fun getCredentials(countryId: Int, cityId: Int, protocol: Protocol?): NetResult<DataObj<Credentials>>
   suspend fun getIp(): NetResult<DataObj<IpModel>>
   suspend fun resetConnection()

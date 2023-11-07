@@ -6,6 +6,7 @@ import co.uk.basedapps.domain.functional.getOrNull
 import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.network.repository.BasedRepository
 import co.uk.basedapps.vpn.network.model.City
+import co.uk.basedapps.vpn.network.model.Protocol
 import co.uk.basedapps.vpn.storage.BasedStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -36,8 +37,9 @@ class CitiesScreenViewModel
 
   private fun getCities(countryId: Int) {
     viewModelScope.launch {
-      val countries = repository.getCountries().getOrNull()?.data // todo: replace with cache
-      val cities = repository.getCities(countryId).getOrNull()?.data
+      val protocol = storage.getVpnProtocol().takeIf { it != Protocol.NONE }
+      val countries = repository.getCountries(protocol).getOrNull()?.data // todo: replace with cache
+      val cities = repository.getCities(countryId, protocol).getOrNull()?.data
       if (countries != null && cities != null) {
         stateHolder.updateState {
           copy(

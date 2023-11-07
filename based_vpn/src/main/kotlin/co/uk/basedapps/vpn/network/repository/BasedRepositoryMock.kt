@@ -31,7 +31,9 @@ class BasedRepositoryMock : BasedRepository {
     ),
   )
 
-  override suspend fun getCountries() = dataList(
+  override suspend fun getCountries(
+    protocol: Protocol?,
+  ) = dataList(
     listOf(
       Country(
         id = 1,
@@ -54,7 +56,10 @@ class BasedRepositoryMock : BasedRepository {
     ),
   )
 
-  override suspend fun getCities(countryId: Int) = dataList(
+  override suspend fun getCities(
+    countryId: Int,
+    protocol: Protocol?,
+  ) = dataList(
     listOf(
       City(
         id = 1,

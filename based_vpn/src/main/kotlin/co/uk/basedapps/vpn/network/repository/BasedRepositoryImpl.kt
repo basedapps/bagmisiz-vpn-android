@@ -26,11 +26,23 @@ class BasedRepositoryImpl(
   override suspend fun getSession(): NetResult<DataObj<TokenModel>> =
     execute(api::getSession)
 
-  override suspend fun getCountries(): NetResult<DataList<Country>> =
-    execute(api::getCountries)
+  override suspend fun getCountries(
+    protocol: Protocol?,
+  ): NetResult<DataList<Country>> = execute {
+    api.getCountries(
+      protocol = protocol?.strValue,
+    )
+  }
 
-  override suspend fun getCities(countryId: Int): NetResult<DataList<City>> =
-    execute { api.getCities(countryId) }
+  override suspend fun getCities(
+    countryId: Int,
+    protocol: Protocol?,
+  ): NetResult<DataList<City>> = execute {
+    api.getCities(
+      countryId = countryId,
+      protocol = protocol?.strValue,
+    )
+  }
 
   override suspend fun getCredentials(
     countryId: Int,

@@ -11,6 +11,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface Api {
 
@@ -23,11 +24,14 @@ interface Api {
   suspend fun getSession(): DataObj<TokenModel>
 
   @GET("countries")
-  suspend fun getCountries(): DataList<Country>
+  suspend fun getCountries(
+    @Query("protocol") protocol: String?,
+  ): DataList<Country>
 
   @GET("countries/{countryId}/cities")
   suspend fun getCities(
     @Path("countryId") countryId: Int,
+    @Query("protocol") protocol: String?,
   ): DataList<City>
 
   /**
