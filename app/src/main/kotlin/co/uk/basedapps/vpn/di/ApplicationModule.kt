@@ -19,5 +19,7 @@ class ApplicationModule {
       override fun getAppVersion() = BuildConfig.VERSION_NAME
       override fun getPackage() = "co.uk.basedapps.vpn"
       override fun getBaseUrl() = BuildConfig.API_URL
+      override fun getBasedAppVersion(): Long = 1
+      override fun getBasedApiVersion(): Long = 1
     }
 }

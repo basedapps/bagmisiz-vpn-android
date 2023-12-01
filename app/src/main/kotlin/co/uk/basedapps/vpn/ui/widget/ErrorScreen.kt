@@ -1,5 +1,6 @@
 package co.uk.basedapps.vpn.ui.widget
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,8 @@ fun ErrorScreen(
   paddingValues: PaddingValues = PaddingValues(),
   title: String? = stringResource(R.string.error_generic_title),
   description: String? = stringResource(R.string.error_generic_description),
+  buttonLabel: String = stringResource(R.string.error_generic_button),
+  @DrawableRes imageResId: Int = R.drawable.ic_error,
   isLoading: Boolean = false,
   onButtonClick: (() -> Unit)? = null,
 ) {
@@ -46,7 +49,7 @@ fun ErrorScreen(
       ),
   ) {
     Icon(
-      painter = painterResource(R.drawable.ic_error),
+      painter = painterResource(imageResId),
       modifier = Modifier.size(64.dp),
       tint = BasedAppColor.Accent,
       contentDescription = null,
@@ -78,7 +81,7 @@ fun ErrorScreen(
     if (onButtonClick != null) {
       Spacer(modifier = Modifier.size(32.dp))
       BasedButton(
-        text = "Try again",
+        text = buttonLabel,
         style = ButtonStyle.Primary,
         onClick = onButtonClick,
         size = ButtonSize.M,

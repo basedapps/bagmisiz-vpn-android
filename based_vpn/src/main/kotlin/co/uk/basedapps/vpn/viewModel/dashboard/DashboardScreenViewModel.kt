@@ -11,6 +11,8 @@ import co.uk.basedapps.vpn.storage.BasedStorage
 import co.uk.basedapps.vpn.storage.SelectedCity
 import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenEffect as Effect
 import co.uk.basedapps.domain.functional.requireLeft
+import co.uk.basedapps.domain.functional.requireRight
+import co.uk.basedapps.vpn.common.provider.AppDetailsProvider
 import co.uk.basedapps.vpn.vpn.VPNConnector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,6 +29,7 @@ class DashboardScreenViewModel
   private val repository: BasedRepository,
   private val storage: BasedStorage,
   private val vpnConnector: VPNConnector,
+  private val provider: AppDetailsProvider,
 ) : ViewModel() {
 
   private val state: DashboardScreenState
@@ -45,6 +48,11 @@ class DashboardScreenViewModel
 
   private fun enrollUser(shouldRefreshToken: Boolean = false) {
     viewModelScope.launch {
+      if (isUpdateRequired()) {
+        handleEnrolmentStatus(EnrollmentStatus.VersionOutdated)
+        return@launch
+      }
+
       if (shouldRefreshToken) {
         storage.clearToken()
       }
@@ -59,24 +67,41 @@ class DashboardScreenViewModel
       } else {
         EnrollmentStatus.NotEnrolled
       }
-      when (enrollmentStatus) {
-        EnrollmentStatus.Enrolled ->
-          stateHolder.updateState { copy(status = Status.Data) }
+      handleEnrolmentStatus(enrollmentStatus)
+    }
+  }
 
-        EnrollmentStatus.NotEnrolled ->
-          stateHolder.updateState { copy(status = Status.Error(false)) }
+  private fun handleEnrolmentStatus(status: EnrollmentStatus) {
+    when (status) {
+      EnrollmentStatus.Enrolled ->
+        stateHolder.updateState { copy(status = Status.Data) }
 
-        EnrollmentStatus.Banned ->
-          stateHolder.updateState {
-            copy(
-              status = Status.Error(false),
-              isBanned = true,
-            )
-          }
+      EnrollmentStatus.NotEnrolled ->
+        stateHolder.updateState { copy(status = Status.Error(false)) }
 
-        EnrollmentStatus.TokenExpired ->
-          enrollUser(shouldRefreshToken = true)
-      }
+      EnrollmentStatus.Banned ->
+        stateHolder.updateState {
+          copy(status = Status.Error(false), isBanned = true)
+        }
+
+      EnrollmentStatus.TokenExpired ->
+        enrollUser(shouldRefreshToken = true)
+
+      EnrollmentStatus.VersionOutdated ->
+        stateHolder.updateState {
+          copy(status = Status.Error(false), isOutdated = true)
+        }
+    }
+  }
+
+  private suspend fun isUpdateRequired(): Boolean {
+    val response = repository.getVersion()
+    return if (response.isRight) {
+      val versions = response.requireRight().data
+      versions.appVersion > provider.getBasedAppVersion() ||
+        versions.apiVersion > provider.getBasedApiVersion()
+    } else {
+      false
     }
   }
 
@@ -193,6 +218,10 @@ class DashboardScreenViewModel
     enrollUser()
   }
 
+  fun onUpdateClick() {
+    stateHolder.sendEffect(Effect.ShowGooglePlay)
+  }
+
   fun onPermissionsResult(isSuccess: Boolean) {
     if (!isSuccess) return
     val city = state.selectedCity ?: return
@@ -267,6 +296,10 @@ class DashboardScreenViewModel
   }
 
   enum class EnrollmentStatus {
-    Enrolled, NotEnrolled, Banned, TokenExpired
+    Enrolled,
+    NotEnrolled,
+    Banned,
+    TokenExpired,
+    VersionOutdated,
   }
 }

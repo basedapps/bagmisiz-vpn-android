@@ -56,6 +56,7 @@ import co.uk.basedapps.vpn.storage.SelectedCity
 import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenEffect as Effect
 import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenState as State
 import androidx.compose.ui.text.style.TextAlign
+import co.uk.basedapps.vpn.common.ext.goToGooglePlay
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.MapboxConfiguredMap
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButton
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButtonState
@@ -109,6 +110,8 @@ fun DashboardScreen(
 
       is Effect.ShowSettings -> navigateToSettings()
 
+      is Effect.ShowGooglePlay -> context.goToGooglePlay()
+
       is Effect.ChangeMapPosition -> {
         scope.launch(Dispatchers.Main) {
           mapViewportState.flyTo(
@@ -132,6 +135,7 @@ fun DashboardScreen(
     onSelectServerClick = viewModel::onSelectServerClick,
     onSettingsClick = viewModel::onSettingsClick,
     onTryAgainClick = viewModel::onTryAgainClick,
+    onUpdateClick = viewModel::onUpdateClick,
     onAlertConfirmClick = viewModel::onAlertConfirmClick,
     onAlertDismissRequest = viewModel::onAlertDismissRequest,
   )
@@ -145,10 +149,19 @@ fun DashboardScreenStateless(
   onSelectServerClick: () -> Unit,
   onSettingsClick: () -> Unit,
   onTryAgainClick: () -> Unit,
+  onUpdateClick: () -> Unit,
   onAlertConfirmClick: () -> Unit,
   onAlertDismissRequest: () -> Unit,
 ) {
   when {
+    state.isOutdated -> ErrorScreen(
+      title = stringResource(R.string.update_required_title),
+      description = stringResource(R.string.update_required_description),
+      buttonLabel = stringResource(R.string.update_required_button),
+      imageResId = R.drawable.ic_update,
+      onButtonClick = onUpdateClick,
+    )
+
     state.isBanned -> ErrorScreen(
       title = null,
       description = stringResource(R.string.error_banned_title),
@@ -499,6 +512,7 @@ fun DashboardScreenPreview() {
       onSelectServerClick = {},
       onSettingsClick = {},
       onTryAgainClick = {},
+      onUpdateClick = {},
       onAlertConfirmClick = {},
       onAlertDismissRequest = {},
     )
