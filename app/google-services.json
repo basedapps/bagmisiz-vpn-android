@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "989124102406",
+    "project_id": "bagimsiz-vpn",
+    "storage_bucket": "bagimsiz-vpn.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989124102406:android:8e7a9801ff4a0c053b3687",
+        "android_client_info": {
+          "package_name": "com.bagimsizvpn.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCs2iSt0En2QuoFHG4kiDeiC0C3kgxojfo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
