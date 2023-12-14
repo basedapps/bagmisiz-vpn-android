@@ -116,7 +116,7 @@ class DashboardScreenViewModel
   }
 
   private suspend fun waitUserEnrollment(): EnrollmentStatus {
-    val maxAttempts = 10
+    val maxAttempts = 20
     repeat(maxAttempts) { attempt ->
       val sessionRes = repository.getSession()
       if (sessionRes.isLeft) {
@@ -128,7 +128,7 @@ class DashboardScreenViewModel
         session?.isBanned == true -> return EnrollmentStatus.Banned
         session?.isEnrolled == true -> return EnrollmentStatus.Enrolled
       }
-      if (attempt < maxAttempts - 1) delay(3.seconds)
+      if (attempt < maxAttempts - 1) delay(5.seconds)
     }
     return EnrollmentStatus.NotEnrolled
   }
