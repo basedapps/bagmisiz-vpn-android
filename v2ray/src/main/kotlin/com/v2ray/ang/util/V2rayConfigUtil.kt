@@ -64,7 +64,7 @@ object V2rayConfigUtil {
 
     inbounds(v2rayConfig)
 
-    httpRequestObject(outbound)
+    updateOutboundWithGlobalSettings(outbound)
 
     v2rayConfig.outbounds[0] = outbound
 
@@ -386,19 +386,14 @@ object V2rayConfigUtil {
           ?: "",
       )
       val routingMode = settingsStorage?.decodeString(AppConfig.PREF_ROUTING_MODE) ?: ERoutingMode.GLOBAL_PROXY.value
-      if (directDomain.size > 0 ||
-        routingMode == ERoutingMode.BYPASS_MAINLAND.value ||
-        routingMode == ERoutingMode.BYPASS_LAN_MAINLAND.value
-      ) {
+      if (directDomain.size > 0 || routingMode == ERoutingMode.BYPASS_MAINLAND.value || routingMode == ERoutingMode.BYPASS_LAN_MAINLAND.value) {
         val domesticDns = Utils.getDomesticDnsServers()
         val geositeCn = arrayListOf("geosite:cn")
         val geoipCn = arrayListOf("geoip:cn")
         if (directDomain.size > 0) {
           servers.add(V2rayConfig.DnsBean.ServersBean(domesticDns.first(), 53, directDomain, geoipCn))
         }
-        if (routingMode == ERoutingMode.BYPASS_MAINLAND.value ||
-          routingMode == ERoutingMode.BYPASS_LAN_MAINLAND.value
-        ) {
+        if (routingMode == ERoutingMode.BYPASS_MAINLAND.value || routingMode == ERoutingMode.BYPASS_LAN_MAINLAND.value) {
           servers.add(V2rayConfig.DnsBean.ServersBean(domesticDns.first(), 53, geositeCn, geoipCn))
         }
         if (Utils.isPureIpAddress(domesticDns.first())) {
@@ -452,8 +447,34 @@ object V2rayConfigUtil {
     return true
   }
 
-  private fun httpRequestObject(outbound: V2rayConfig.OutboundBean): Boolean {
+  private fun updateOutboundWithGlobalSettings(outbound: V2rayConfig.OutboundBean): Boolean {
     try {
+      var muxEnabled = settingsStorage?.decodeBool(AppConfig.PREF_MUX_ENABLED, false)
+
+      val protocol = outbound.protocol
+      if (protocol.equals(EConfigType.SHADOWSOCKS.name, true) ||
+        protocol.equals(EConfigType.SOCKS.name, true) ||
+        protocol.equals(EConfigType.TROJAN.name, true)
+      ) {
+        muxEnabled = false
+      } else if (protocol.equals(EConfigType.VLESS.name, true) &&
+        outbound.settings?.vnext?.get(0)?.users?.get(0)?.flow?.isNotEmpty() == true
+      ) {
+        muxEnabled = false
+      }
+
+      if (muxEnabled == true) {
+        outbound.mux?.enabled = true
+        outbound.mux?.concurrency = 8
+        outbound.mux?.xudpConcurrency =
+          settingsStorage?.decodeInt(AppConfig.PREF_MUX_XUDP_CONCURRENCY) ?: 8
+        outbound.mux?.xudpProxyUDP443 =
+          settingsStorage?.decodeString(AppConfig.PREF_MUX_XUDP_QUIC) ?: "reject"
+      } else {
+        outbound.mux?.enabled = false
+        outbound.mux?.concurrency = -1
+      }
+
       if (outbound.streamSettings?.network == DEFAULT_NETWORK &&
         outbound.streamSettings?.tcpSettings?.header?.type == HTTP
       ) {

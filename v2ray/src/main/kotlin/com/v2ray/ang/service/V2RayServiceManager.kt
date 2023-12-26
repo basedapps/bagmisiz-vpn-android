@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Context.RECEIVER_NOT_EXPORTED
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
@@ -14,7 +13,6 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.tencent.mmkv.MMKV
 import com.v2ray.ang.AppConfig
@@ -50,26 +48,29 @@ object V2RayServiceManager {
   private const val NOTIFICATION_PENDING_INTENT_STOP_V2RAY = 1
   private const val NOTIFICATION_ICON_THRESHOLD = 3000
 
-  private val v2rayPoint: V2RayPoint =
+  val v2rayPoint: V2RayPoint =
     Libv2ray.newV2RayPoint(V2RayCallback(), Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
   private val mMsgReceive = ReceiveMessageHandler()
   private val mainStorage by lazy { MMKV.mmkvWithID(MmkvManager.ID_MAIN, MMKV.MULTI_PROCESS_MODE) }
   private val settingsStorage by lazy { MMKV.mmkvWithID(MmkvManager.ID_SETTING, MMKV.MULTI_PROCESS_MODE) }
+
+  // my code:
   private val serverRawStorage by lazy { MMKV.mmkvWithID(MmkvManager.ID_SERVER_RAW, MMKV.MULTI_PROCESS_MODE) }
 
   var serviceControl: SoftReference<ServiceControl>? = null
     set(value) {
       field = value
       Seq.setContext(value?.get()?.getService()?.applicationContext)
-      Libv2ray.initV2Env(Utils.userAssetPath(value?.get()?.getService()))
+      Libv2ray.initV2Env(Utils.userAssetPath(value?.get()?.getService()), Utils.getDeviceIdForXUDPBaseKey())
     }
   var currentConfig: ServerConfig? = null
 
   private var lastQueryTime = 0L
   private var mBuilder: NotificationCompat.Builder? = null
-  private var speedNotificationJob: Job? = null
+  private var mSubscription: Job? = null
   private var mNotificationManager: NotificationManager? = null
 
+  // this is my method to set a server
   fun setV2RayServer(server: String) {
     MmkvManager.removeAllServer()
     val config = ServerConfig.create(EConfigType.CUSTOM)
@@ -97,6 +98,7 @@ object V2RayServiceManager {
     }
   }
 
+  // this is my method to stop VPN
   fun stopV2Ray(context: Context) {
     Utils.stopVService(context)
     MmkvManager.removeAllServer()
@@ -159,7 +161,11 @@ object V2RayServiceManager {
         mFilter.addAction(Intent.ACTION_SCREEN_ON)
         mFilter.addAction(Intent.ACTION_SCREEN_OFF)
         mFilter.addAction(Intent.ACTION_USER_PRESENT)
-        ContextCompat.registerReceiver(service, mMsgReceive, mFilter, ContextCompat.RECEIVER_NOT_EXPORTED)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          service.registerReceiver(mMsgReceive, mFilter, Context.RECEIVER_EXPORTED)
+        } else {
+          service.registerReceiver(mMsgReceive, mFilter)
+        }
       } catch (e: Exception) {
         Log.d(ANG_LOGS_TAG, e.toString())
       }
@@ -280,6 +286,7 @@ object V2RayServiceManager {
 
   private fun showNotification() {
     val service = serviceControl?.get()?.getService() ?: return
+    // this is my method to avoid using hardcoded activity class and package name
     val packageName = service.application.packageName
     val startMainIntent = service.packageManager
       ?.getLaunchIntentForPackage(packageName)
@@ -363,8 +370,8 @@ object V2RayServiceManager {
     val service = serviceControl?.get()?.getService() ?: return
     service.stopForeground(true)
     mBuilder = null
-    speedNotificationJob?.cancel()
-    speedNotificationJob = null
+    mSubscription?.cancel()
+    mSubscription = null
   }
 
   private fun updateNotification(contentText: String?, proxyTraffic: Long, directTraffic: Long) {
@@ -391,7 +398,7 @@ object V2RayServiceManager {
   }
 
   private fun startSpeedNotification() {
-    if (speedNotificationJob == null &&
+    if (mSubscription == null &&
       v2rayPoint.isRunning &&
       settingsStorage?.decodeBool(AppConfig.PREF_SPEED_ENABLED) == true
     ) {
@@ -399,7 +406,7 @@ object V2RayServiceManager {
       val outboundTags = currentConfig?.getAllOutboundTags()
       outboundTags?.remove(TAG_DIRECT)
 
-      speedNotificationJob = GlobalScope.launch {
+      mSubscription = GlobalScope.launch {
         while (isActive) {
           delay(3000)
           val queryTime = System.currentTimeMillis()
@@ -447,9 +454,9 @@ object V2RayServiceManager {
   }
 
   private fun stopSpeedNotification() {
-    if (speedNotificationJob != null) {
-      speedNotificationJob?.cancel() // stop queryStats
-      speedNotificationJob = null
+    if (mSubscription != null) {
+      mSubscription?.cancel() // stop queryStats
+      mSubscription = null
       updateNotification(currentConfig?.remarks, 0, 0)
     }
   }

@@ -355,7 +355,12 @@ data class V2rayConfig(
       }
     }
 
-    data class MuxBean(var enabled: Boolean, var concurrency: Int = 8)
+    data class MuxBean(
+      var enabled: Boolean,
+      var concurrency: Int = 8,
+      var xudpConcurrency: Int = 8,
+      var xudpProxyUDP443: String = "",
+    )
 
     fun getServerAddress(): String? {
       if (protocol.equals(EConfigType.VMESS.name, true) ||
@@ -546,7 +551,7 @@ data class V2rayConfig(
   ) // roughly 10 times smaller than total ip pool
 
   fun getProxyOutbound(): OutboundBean? {
-    outbounds.forEach { outbound ->
+    outbounds?.forEach { outbound ->
       EConfigType.values().forEach {
         if (outbound.protocol.equals(it.name, true)) {
           return outbound

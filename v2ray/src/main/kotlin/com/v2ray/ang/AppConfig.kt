@@ -40,6 +40,9 @@ object AppConfig {
   const val PREF_BYPASS_APPS = "pref_bypass_apps"
   const val PREF_CONFIRM_REMOVE = "pref_confirm_remove"
   const val PREF_START_SCAN_IMMEDIATE = "pref_start_scan_immediate"
+  const val PREF_MUX_ENABLED = "pref_mux_enabled"
+  const val PREF_MUX_XUDP_CONCURRENCY = "pref_mux_xudp_concurency"
+  const val PREF_MUX_XUDP_QUIC = "pref_mux_xudp_quic"
 
   const val HTTP_PROTOCOL: String = "http://"
   const val HTTPS_PROTOCOL: String = "https://"
@@ -63,6 +66,7 @@ object AppConfig {
   const val v2rayCustomRoutingListUrl = "https://raw.githubusercontent.com/2dust/v2rayCustomRoutingList/master/"
   const val v2rayNGIssues = "https://github.com/2dust/v2rayNG/issues"
   const val v2rayNGWikiMode = "https://github.com/2dust/v2rayNG/wiki/Mode"
+  const val v2rayNGPrivacyPolicy = "https://raw.githubusercontent.com/2dust/v2rayNG/master/CR.md"
   const val promotionUrl = "aHR0cHM6Ly85LjIzNDQ1Ni54eXovYWJjLmh0bWw="
   const val geoUrl = "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/"
 
@@ -88,4 +92,10 @@ object AppConfig {
   const val MSG_MEASURE_CONFIG = 7
   const val MSG_MEASURE_CONFIG_SUCCESS = 71
   const val MSG_MEASURE_CONFIG_CANCEL = 72
+
+  // subscription settings
+  const val SUBSCRIPTION_AUTO_UPDATE = "pref_auto_update_subscription"
+  const val SUBSCRIPTION_AUTO_UPDATE_INTERVAL = "pref_auto_update_interval"
+  const val SUBSCRIPTION_DEFAULT_UPDATE_INTERVAL = "1440" // 24 hours
+  const val SUBSCRIPTION_UPDATE_TASK_NAME = "subscription_updater"
 }
