@@ -9,17 +9,23 @@
         <service
             android:name="com.v2ray.ang.service.V2RayProxyOnlyService"
             android:exported="false"
-            android:process=":RunSoLibV2RayDaemon" />
+            android:foregroundServiceType="specialUse"
+            android:process=":RunSoLibV2RayDaemon">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="proxy" />
+        </service>
 
         <service
             android:name="com.v2ray.ang.service.V2RayVpnService"
+            android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="specialUse"
             android:permission="android.permission.BIND_VPN_SERVICE"
             android:process=":RunSoLibV2RayDaemon">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Establishing VPN connection" />
+                android:value="vpn" />
             <intent-filter>
                 <action android:name="android.net.VpnService" />
             </intent-filter>
