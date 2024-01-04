@@ -36,9 +36,7 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    lifecycleScope.launch {
-      adManager.preloadInterstitialAd()
-    }
+    initAd()
     setFullScreen()
     setContent {
       BasedVPNTheme {
@@ -100,6 +98,13 @@ class MainActivity : ComponentActivity() {
           }
         }
       }
+    }
+  }
+
+  private fun initAd() {
+    adManager.initialize(this.applicationContext)
+    lifecycleScope.launch {
+      adManager.preloadInterstitialAd()
     }
   }
 }
