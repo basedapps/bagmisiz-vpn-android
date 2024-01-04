@@ -79,6 +79,7 @@ accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 wireguard = { module = "com.wireguard.android:tunnel", version.ref = "wireguard" }
+play-ads = { module = "com.google.android.gms:play-services-ads", version = "22.6.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -7,11 +7,13 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import co.uk.basedapps.vpn.ad.AdManager
 import co.uk.basedapps.vpn.storage.BasedStorage
 import co.uk.basedapps.vpn.ui.screens.cities.CitiesScreen
 import co.uk.basedapps.vpn.ui.screens.countries.CountriesScreen
@@ -21,6 +23,7 @@ import co.uk.basedapps.vpn.ui.screens.settings.SettingsScreen
 import co.uk.basedapps.vpn.ui.theme.BasedVPNTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -28,8 +31,14 @@ class MainActivity : ComponentActivity() {
   @Inject
   lateinit var basedStorage: BasedStorage
 
+  @Inject
+  lateinit var adManager: AdManager
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    lifecycleScope.launch {
+      adManager.preloadInterstitialAd()
+    }
     setFullScreen()
     setContent {
       BasedVPNTheme {
@@ -58,6 +67,7 @@ class MainActivity : ComponentActivity() {
             DashboardScreen(
               navigateToCountries = { navController.navigate(Destination.Countries) },
               navigateToSettings = { navController.navigate(Destination.Settings) },
+              showAd = { adManager.showInterstitialAd(this@MainActivity) },
             )
           }
           composable(Destination.Countries) {

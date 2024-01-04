@@ -22,6 +22,7 @@ data class DashboardScreenState(
 )
 
 sealed interface DashboardScreenEffect {
+  data object ShowAd : DashboardScreenEffect
   data object CheckVpnPermission : DashboardScreenEffect
   data object ShowSelectServer : DashboardScreenEffect
   data object ShowSettings : DashboardScreenEffect

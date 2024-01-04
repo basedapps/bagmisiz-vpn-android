@@ -44,19 +44,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import co.uk.basedapps.vpn.R
 import co.uk.basedapps.vpn.common.compose.EffectHandler
+import co.uk.basedapps.vpn.common.ext.goToGooglePlay
 import co.uk.basedapps.vpn.common.flags.CountryFlag
 import co.uk.basedapps.vpn.common.state.Status
 import co.uk.basedapps.vpn.storage.SelectedCity
-import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenEffect as Effect
-import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenState as State
-import androidx.compose.ui.text.style.TextAlign
-import co.uk.basedapps.vpn.common.ext.goToGooglePlay
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.MapboxConfiguredMap
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButton
 import co.uk.basedapps.vpn.ui.screens.dashboard.widget.VpnButtonState
@@ -64,6 +62,8 @@ import co.uk.basedapps.vpn.ui.theme.BasedAppColor
 import co.uk.basedapps.vpn.ui.theme.BasedVPNTheme
 import co.uk.basedapps.vpn.ui.widget.BasedAlertDialog
 import co.uk.basedapps.vpn.ui.widget.ErrorScreen
+import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenEffect as Effect
+import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenState as State
 import co.uk.basedapps.vpn.viewModel.dashboard.DashboardScreenViewModel
 import co.uk.basedapps.vpn.viewModel.dashboard.VpnStatus
 import co.uk.basedapps.vpn.vpn.getVpnPermissionRequest
@@ -80,6 +80,7 @@ import kotlinx.coroutines.launch
 fun DashboardScreen(
   navigateToCountries: () -> Unit,
   navigateToSettings: () -> Unit,
+  showAd: suspend () -> Boolean,
 ) {
   val viewModel = hiltViewModel<DashboardScreenViewModel>()
   val state by viewModel.stateHolder.state.collectAsState()
@@ -97,6 +98,11 @@ fun DashboardScreen(
 
   EffectHandler(viewModel.stateHolder.effects) { effect ->
     when (effect) {
+      is Effect.ShowAd -> scope.launch {
+        showAd()
+        viewModel.onAdShown()
+      }
+
       is Effect.ShowSelectServer -> navigateToCountries()
 
       is Effect.CheckVpnPermission -> {

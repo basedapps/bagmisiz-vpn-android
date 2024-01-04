@@ -46,6 +46,7 @@ dependencies {
     implementation libs.http.logger
     implementation libs.gson
     implementation libs.gson.converter
+    implementation libs.play.ads
 
     kapt libs.hilt.compiler
 
