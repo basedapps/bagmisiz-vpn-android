@@ -17,8 +17,8 @@ android {
         targetSdk libs.versions.compileSdk.get().toInteger()
         compileSdk libs.versions.compileSdk.get().toInteger()
 
-        versionCode 26
-        versionName "1.0.26"
+        versionCode 27
+        versionName "1.0.27"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
