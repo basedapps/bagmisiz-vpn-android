@@ -23,7 +23,9 @@ class ApplicationModule {
       override fun getPackage() = "co.uk.basedapps.vpn"
       override fun getBaseUrl() = BuildConfig.API_URL
       override fun getBasedAppVersion(): Long = 1
-      override fun getBasedApiVersion(): Long = 1
+      override fun getBasedApiVersion(): Long = 2
+      override fun getAppToken(): String =
+        "2GxLArhbzrH6krVr8Cz11a2Ao3vLN1ImIuZkuUKd6q14LyS9Dol4D7ZrmCq76fUufk1IXWVBGkokeVx3E2ydbSxxrFh7SKTnFlwAvUNmNHkQDU6Ge06xkERB6p0r8pWA"
     }
 
   @Provides

@@ -6,4 +6,5 @@ interface AppDetailsProvider {
   fun getBaseUrl(): String
   fun getBasedAppVersion(): Long
   fun getBasedApiVersion(): Long
+  fun getAppToken(): String
 }
